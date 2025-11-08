@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔧 Debug System - Điện Máy Xanh</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f5f5f5; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
+        .header h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .header p { font-size: 1.2em; opacity: 0.9; }
+        .status-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 30px; }
+        .status-card { background: #f8f9fa; border-radius: 10px; padding: 25px; border-left: 5px solid #28a745; transition: transform 0.3s ease; }
+        .status-card:hover { transform: translateY(-5px); }
+        .status-card.error { border-left-color: #dc3545; background: #fff5f5; }
+        .status-card.warning { border-left-color: #ffc107; background: #fffaf0; }
+        .card-title { font-size: 1.4em; font-weight: 600; margin-bottom: 15px; color: #333; }
+        .status-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #e9ecef; }
+        .status-item:last-child { border-bottom: none; }
+        .status-label { font-weight: 500; color: #555; }
+        .status-value { font-weight: 600; }
+        .status-success { color: #28a745; }
+        .status-error { color: #dc3545; }
+        .status-warning { color: #ffc107; }
+        .test-section { padding: 30px; background: #f8f9fa; }
+        .test-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px; margin-top: 20px; }
+        .test-btn { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 15px 20px; border-radius: 8px; cursor: pointer; font-size: 1em; font-weight: 500; transition: all 0.3s ease; }
+        .test-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.2); }
+        .test-btn.success { background: linear-gradient(135deg, #28a745 0%, #20c997 100%); }
+        .test-btn.error { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); }
+        .console-output { background: #1e1e1e; color: #f8f8f2; padding: 20px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; max-height: 300px; overflow-y: auto; margin-top: 20px; }
+        .console-line { margin-bottom: 5px; }
+        .console-info { color: #66d9ef; }
+        .console-success { color: #a6e22e; }
+        .console-error { color: #f92672; }
+        .console-warning { color: #fd971f; }
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid #f3f3f3; border-top: 3px solid #667eea; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .feature-test { background: white; border-radius: 10px; padding: 25px; margin: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .api-response { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 5px; padding: 15px; margin-top: 15px; font-family: monospace; font-size: 0.9em; max-height: 200px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔧 Debug System</h1>
+            <p>Kiểm tra toàn bộ tính năng Điện Máy Xanh</p>
+        </div>
+
+        <!-- System Status -->
+        <div class="status-section">
+            <div class="status-grid">
+                <div class="status-card" id="serverStatus">
+                    <div class="card-title">🖥️ Server Status</div>
+                    <div class="status-item">
+                        <span class="status-label">API Base URL:</span>
+                        <span class="status-value" id="apiBaseUrl">http://20.205.30.184:5000</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Server Connection:</span>
+                        <span class="status-value" id="serverConnection">⏳ Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Response Time:</span>
+                        <span class="status-value" id="responseTime">-</span>
+                    </div>
+                </div>
+
+                <div class="status-card" id="authStatus">
+                    <div class="card-title">🔐 Authentication</div>
+                    <div class="status-item">
+                        <span class="status-label">Login Status:</span>
+                        <span class="status-value" id="loginStatus">⏳ Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Token:</span>
+                        <span class="status-value" id="tokenStatus">Not found</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">User Data:</span>
+                        <span class="status-value" id="userData">No data</span>
+                    </div>
+                </div>
+
+                <div class="status-card" id="databaseStatus">
+                    <div class="card-title">🗄️ Database Connection</div>
+                    <div class="status-item">
+                        <span class="status-label">Products API:</span>
+                        <span class="status-value" id="productsApi">⏳ Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Categories API:</span>
+                        <span class="status-value" id="categoriesApi">⏳ Checking...</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Users API:</span>
+                        <span class="status-value" id="usersApi">⏳ Checking...</span>
+                    </div>
+                </div>
+
+                <div class="status-card" id="frontendStatus">
+                    <div class="card-title">🌐 Frontend Status</div>
+                    <div class="status-item">
+                        <span class="status-label">JavaScript:</span>
+                        <span class="status-value" id="jsStatus">✅ Enabled</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">LocalStorage:</span>
+                        <span class="status-value" id="localStorageStatus">✅ Available</span>
+                    </div>
+                    <div class="status-item">
+                        <span class="status-label">Console Errors:</span>
+                        <span class="status-value" id="consoleErrors">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feature Tests -->
+        <div class="test-section">
+            <h2>🧪 Feature Tests</h2>
+            <div class="feature-test">
+                <h3>Authentication Tests</h3>
+                <div class="test-grid">
+                    <button class="test-btn" onclick="testRegister()">📝 Test Register</button>
+                    <button class="test-btn" onclick="testLogin()">🔐 Test Login</button>
+                    <button class="test-btn" onclick="testProfile()">👤 Test Profile</button>
+                    <button class="test-btn" onclick="testLogout()">🚪 Test Logout</button>
+                </div>
+                <div id="authResult" class="api-response" style="display:none;"></div>
+            </div>
+
+            <div class="feature-test">
+                <h3>Product Tests</h3>
+                <div class="test-grid">
+                    <button class="test-btn" onclick="testGetProducts()">📦 Get Products</button>
+                    <button class="test-btn" onclick="testGetCategories()">🏷️ Get Categories</button>
+                    <button class="test-btn" onclick="testSearchProducts()">🔍 Search Products</button>
+                    <button class="test-btn" onclick="testGetProductDetail()">📋 Product Detail</button>
+                </div>
+                <div id="productResult" class="api-response" style="display:none;"></div>
+            </div>
+
+            <div class="feature-test">
+                <h3>Cart Tests</h3>
+                <div class="test-grid">
+                    <button class="test-btn" onclick="testGetCart()">🛒 Get Cart</button>
+                    <button class="test-btn" onclick="testAddToCart()">➕ Add to Cart</button>
+                    <button class="test-btn" onclick="testUpdateCart()">🔄 Update Cart</button>
+                    <button class="test-btn" onclick="testRemoveFromCart()">❌ Remove from Cart</button>
+                </div>
+                <div id="cartResult" class="api-response" style="display:none;"></div>
+            </div>
+
+            <div class="feature-test">
+                <h3>Order Tests</h3>
+                <div class="test-grid">
+                    <button class="test-btn" onclick="testGetOrders()">📋 Get Orders</button>
+                    <button class="test-btn" onclick="testCreateOrder()">🆕 Create Order</button>
+                    <button class="test-btn" onclick="testGetOrderDetail()">📄 Order Detail</button>
+                </div>
+                <div id="orderResult" class="api-response" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- Console Output -->
+        <div class="test-section">
+            <h2>🖥️ Console Output</h2>
+            <div id="consoleOutput" class="console-output">
+                <div class="console-line console-info">Console initialized. Ready for testing...</div>
+            </div>
+            <button class="test-btn" onclick="clearConsole()" style="margin-top:10px;">🗑️ Clear Console</button>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_BASE_URL = 'http://20.205.30.184:5000/api';
+        let authToken = localStorage.getItem('token');
+        let currentUser = null;
+        let consoleErrors = 0;
+
+        // Console logging
+        function logToConsole(message, type = 'info') {
+            const consoleOutput = document.getElementById('consoleOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            const line = document.createElement('div');
+            line.className = `console-line console-${type}`;
+            line.textContent = `[${timestamp}] ${message}`;
+            consoleOutput.appendChild(line);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            
+            // Update error count
+            if (type === 'error') {
+                consoleErrors++;
+                document.getElementById('consoleErrors').textContent = consoleErrors;
+            }
+        }
+
+        function clearConsole() {
+            document.getElementById('consoleOutput').innerHTML = '<div class="console-line console-info">Console cleared. Ready for testing...</div>';
+            consoleErrors = 0;
+            document.getElementById('consoleErrors').textContent = '0';
+        }
+
+        // Initial system check
+        async function checkSystemStatus() {
+            logToConsole('Starting system check...', 'info');
+            
+            // Check server connection
+            await checkServerConnection();
+            
+            // Check authentication
+            await checkAuthentication();
+            
+            // Check database APIs
+            await checkDatabaseAPIs();
+            
+            logToConsole('System check completed.', 'info');
+        }
+
+        // Check server connection
+        async function checkServerConnection() {
+            try {
+                logToConsole('Checking server connection...', 'info');
+                const startTime = Date.now();
+                
+                const response = await fetch(`${API_BASE_URL.replace('/api', '')}/health`);
+                const responseTime = Date.now() - startTime;
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('serverConnection').innerHTML = '<span class="status-success">✅ Connected</span>';
+                    document.getElementById('responseTime').textContent = `${responseTime}ms`;
+                    logToConsole(`Server connected successfully. Response time: ${responseTime}ms`, 'success');
+                } else {
+                    document.getElementById('serverConnection').innerHTML = '<span class="status-error">❌ Failed</span>';
+                    logToConsole(`Server connection failed: ${response.status} ${response.statusText}`, 'error');
+                }
+            } catch (error) {
+                document.getElementById('serverConnection').innerHTML = '<span class="status-error">❌ Error</span>';
+                logToConsole(`Server connection error: ${error.message}`, 'error');
+            }
+        }
+
+        // Check authentication
+        async function checkAuthentication() {
+            logToConsole('Checking authentication status...', 'info');
+            
+            if (authToken) {
+                document.getElementById('tokenStatus').textContent = '✅ Found';
+                
+                try {
+                    const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        currentUser = await response.json();
+                        document.getElementById('loginStatus').innerHTML = '<span class="status-success">✅ Logged in</span>';
+                        document.getElementById('userData').textContent = currentUser.email || currentUser.name || 'User data loaded';
+                        logToConsole('Authentication successful', 'success');
+                    } else {
+                        document.getElementById('loginStatus').innerHTML = '<span class="status-error">❌ Invalid token</span>';
+                        localStorage.removeItem('token');
+                        authToken = null;
+                        logToConsole('Invalid authentication token', 'error');
+                    }
+                } catch (error) {
+                    document.getElementById('loginStatus').innerHTML = '<span class="status-error">❌ Error</span>';
+                    logToConsole(`Authentication error: ${error.message}`, 'error');
+                }
+            } else {
+                document.getElementById('loginStatus').innerHTML = '<span class="status-warning">⚠️ Not logged in</span>';
+                document.getElementById('tokenStatus').textContent = 'Not found';
+                logToConsole('No authentication token found', 'warning');
+            }
+        }
+
+        // Check database APIs
+        async function checkDatabaseAPIs() {
+            logToConsole('Checking database APIs...', 'info');
+            
+            // Check products
+            await checkAPIEndpoint('products', 'productsApi');
+            
+            // Check categories
+            await checkAPIEndpoint('categories', 'categoriesApi');
+            
+            // Check users (if authenticated)
+            if (authToken) {
+                await checkAPIEndpoint('users', 'usersApi');
+            } else {
+                document.getElementById('usersApi').innerHTML = '<span class="status-warning">⚠️ Requires auth</span>';
+            }
+        }
+
+        // Check specific API endpoint
+        async function checkAPIEndpoint(endpoint, elementId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/${endpoint}`);
+                
+                if (response.ok) {
+                    document.getElementById(elementId).innerHTML = '<span class="status-success">✅ Working</span>';
+                    logToConsole(`${endpoint} API is working`, 'success');
+                } else {
+                    document.getElementById(elementId).innerHTML = '<span class="status-error">❌ Failed</span>';
+                    logToConsole(`${endpoint} API failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                document.getElementById(elementId).innerHTML = '<span class="status-error">❌ Error</span>';
+                logToConsole(`${endpoint} API error: ${error.message}`, 'error');
+            }
+        }
+
+        // Test functions
+        async function testRegister() {
+            logToConsole('Testing registration...', 'info');
+            const resultDiv = document.getElementById('authResult');
+            resultDiv.style.display = 'block';
+            
+            const testData = {
+                firstName: 'Test',
+                lastName: 'User',
+                email: 'testuser' + Date.now() + '@example.com',
+                password: 'Test@123456',
+                phone: '0900000000'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/register`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(testData)
+                });
+                
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Register Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok) {
+                    logToConsole('Registration successful', 'success');
+                } else {
+                    logToConsole(`Registration failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Registration error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testLogin() {
+            logToConsole('Testing login...', 'info');
+            const resultDiv = document.getElementById('authResult');
+            resultDiv.style.display = 'block';
+            
+            const loginData = {
+                email: 'testuser' + (Date.now() - 1000) + '@example.com',
+                password: 'Test@123456'
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+                
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Login Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok && result.token) {
+                    localStorage.setItem('token', result.token);
+                    authToken = result.token;
+                    currentUser = result.user;
+                    logToConsole('Login successful', 'success');
+                    checkAuthentication(); // Refresh auth status
+                } else {
+                    logToConsole(`Login failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Login error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testProfile() {
+            logToConsole('Testing profile...', 'info');
+            const resultDiv = document.getElementById('authResult');
+            resultDiv.style.display = 'block';
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<strong>Error:</strong> No authentication token. Please login first.';
+                logToConsole('No authentication token for profile test', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Profile Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok) {
+                    logToConsole('Profile fetch successful', 'success');
+                } else {
+                    logToConsole(`Profile fetch failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Profile error: ${error.message}`, 'error');
+            }
+        }
+
+        function testLogout() {
+            logToConsole('Testing logout...', 'info');
+            localStorage.removeItem('token');
+            authToken = null;
+            currentUser = null;
+            
+            document.getElementById('authResult').innerHTML = '<strong>Logout:</strong> Token removed from localStorage';
+            document.getElementById('loginStatus').innerHTML = '<span class="status-warning">⚠️ Not logged in</span>';
+            document.getElementById('tokenStatus').textContent = 'Not found';
+            document.getElementById('userData').textContent = 'No data';
+            
+            logToConsole('Logout successful', 'success');
+        }
+
+        async function testGetProducts() {
+            logToConsole('Testing get products...', 'info');
+            const resultDiv = document.getElementById('productResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/products`);
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Products Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok) {
+                    logToConsole(`Products loaded: ${result.length || result.products?.length || 0} items`, 'success');
+                } else {
+                    logToConsole(`Products failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Products error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetCategories() {
+            logToConsole('Testing get categories...', 'info');
+            const resultDiv = document.getElementById('productResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/categories`);
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Categories Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok) {
+                    logToConsole(`Categories loaded: ${result.length || 0} items`, 'success');
+                } else {
+                    logToConsole(`Categories failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Categories error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSearchProducts() {
+            logToConsole('Testing search products...', 'info');
+            const resultDiv = document.getElementById('productResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/products/search?q=điện thoại`);
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Search Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok) {
+                    logToConsole(`Search results: ${result.length || 0} items`, 'success');
+                } else {
+                    logToConsole(`Search failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Search error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetProductDetail() {
+            logToConsole('Testing product detail...', 'info');
+            const resultDiv = document.getElementById('productResult');
+            resultDiv.style.display = 'block';
+            
+            try {
+                // First get a product ID
+                const productsResponse = await fetch(`${API_BASE_URL}/products?limit=1`);
+                const products = await productsResponse.json();
+                
+                if (products.length > 0) {
+                    const productId = products[0]._id;
+                    const response = await fetch(`${API_BASE_URL}/products/${productId}`);
+                    const result = await response.json();
+                    resultDiv.innerHTML = `<strong>Product Detail Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                    
+                    if (response.ok) {
+                        logToConsole(`Product detail loaded: ${result.name || 'Unknown'}`, 'success');
+                    } else {
+                        logToConsole(`Product detail failed: ${result.message || 'Unknown error'}`, 'error');
+                    }
+                } else {
+                    resultDiv.innerHTML = '<strong>Error:</strong> No products found to test';
+                    logToConsole('No products found for detail test', 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Product detail error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetCart() {
+            logToConsole('Testing get cart...', 'info');
+            const resultDiv = document.getElementById('cartResult');
+            resultDiv.style.display = 'block';
+            
+            if (!authToken) {
+                resultDiv.innerHTML = '<strong>Error:</strong> No authentication token. Please login first.';
+                logToConsole('No authentication token for cart test', 'error');
+                return;
+            }
+            
+            if (!currentUser) {
+                resultDiv.innerHTML = '<strong>Error:</strong> No user data. Please login first.';
+                logToConsole('No user data for cart test', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/cart/${currentUser._id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Cart Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok) {
+                    logToConsole('Cart loaded successfully', 'success');
+                } else {
+                    logToConsole(`Cart failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Cart error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testAddToCart() {
+            logToConsole('Testing add to cart...', 'info');
+            const resultDiv = document.getElementById('cartResult');
+            resultDiv.style.display = 'block';
+            
+            if (!authToken || !currentUser) {
+                resultDiv.innerHTML = '<strong>Error:</strong> Please login first.';
+                logToConsole('Authentication required for cart test', 'error');
+                return;
+            }
+            
+            try {
+                // First get a product to add
+                const productsResponse = await fetch(`${API_BASE_URL}/products?limit=1`);
+                const products = await productsResponse.json();
+                
+                if (products.length > 0) {
+                    const productId = products[0]._id;
+                    const cartData = {
+                        userId: currentUser._id,
+                        productId: productId,
+                        quantity: 1
+                    };
+                    
+                    const response = await fetch(`${API_BASE_URL}/cart/add`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${authToken}`
+                        },
+                        body: JSON.stringify(cartData)
+                    });
+                    
+                    const result = await response.json();
+                    resultDiv.innerHTML = `<strong>Add to Cart Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                    
+                    if (response.ok) {
+                        logToConsole('Add to cart successful', 'success');
+                    } else {
+                        logToConsole(`Add to cart failed: ${result.message || 'Unknown error'}`, 'error');
+                    }
+                } else {
+                    resultDiv.innerHTML = '<strong>Error:</strong> No products found to add to cart';
+                    logToConsole('No products found for cart test', 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Add to cart error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testUpdateCart() {
+            logToConsole('Testing update cart...', 'info');
+            // Implementation similar to testAddToCart but with update endpoint
+            const resultDiv = document.getElementById('cartResult');
+            resultDiv.innerHTML = '<strong>Update Cart:</strong> Feature test placeholder - implement similar to add to cart';
+            logToConsole('Update cart test placeholder', 'warning');
+        }
+
+        async function testRemoveFromCart() {
+            logToConsole('Testing remove from cart...', 'info');
+            // Implementation similar to testAddToCart but with remove endpoint
+            const resultDiv = document.getElementById('cartResult');
+            resultDiv.innerHTML = '<strong>Remove from Cart:</strong> Feature test placeholder - implement similar to add to cart';
+            logToConsole('Remove from cart test placeholder', 'warning');
+        }
+
+        async function testGetOrders() {
+            logToConsole('Testing get orders...', 'info');
+            const resultDiv = document.getElementById('orderResult');
+            resultDiv.style.display = 'block';
+            
+            if (!authToken || !currentUser) {
+                resultDiv.innerHTML = '<strong>Error:</strong> Please login first.';
+                logToConsole('Authentication required for orders test', 'error');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/orders/user/${currentUser._id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Orders Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok) {
+                    logToConsole(`Orders loaded: ${result.length || 0} orders`, 'success');
+                } else {
+                    logToConsole(`Orders failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Orders error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testCreateOrder() {
+            logToConsole('Testing create order...', 'info');
+            const resultDiv = document.getElementById('orderResult');
+            resultDiv.style.display = 'block';
+            
+            if (!authToken || !currentUser) {
+                resultDiv.innerHTML = '<strong>Error:</strong> Please login first.';
+                logToConsole('Authentication required for order test', 'error');
+                return;
+            }
+            
+            try {
+                const orderData = {
+                    userId: currentUser._id,
+                    items: [],
+                    totalAmount: 0,
+                    shippingAddress: {
+                        street: '123 Test Street',
+                        city: 'Test City',
+                        district: 'Test District',
+                        ward: 'Test Ward'
+                    },
+                    paymentMethod: 'cod'
+                };
+                
+                const response = await fetch(`${API_BASE_URL}/orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${authToken}`
+                    },
+                    body: JSON.stringify(orderData)
+                });
+                
+                const result = await response.json();
+                resultDiv.innerHTML = `<strong>Create Order Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                
+                if (response.ok) {
+                    logToConsole('Order created successfully', 'success');
+                } else {
+                    logToConsole(`Order creation failed: ${result.message || 'Unknown error'}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Order creation error: ${error.message}`, 'error');
+            }
+        }
+
+        async function testGetOrderDetail() {
+            logToConsole('Testing order detail...', 'info');
+            const resultDiv = document.getElementById('orderResult');
+            resultDiv.style.display = 'block';
+            
+            if (!authToken || !currentUser) {
+                resultDiv.innerHTML = '<strong>Error:</strong> Please login first.';
+                logToConsole('Authentication required for order detail test', 'error');
+                return;
+            }
+            
+            try {
+                // First get orders to get an order ID
+                const ordersResponse = await fetch(`${API_BASE_URL}/orders/user/${currentUser._id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`
+                    }
+                });
+                
+                const orders = await ordersResponse.json();
+                
+                if (orders.length > 0) {
+                    const orderId = orders[0]._id;
+                    const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
+                        headers: {
+                            'Authorization': `Bearer ${authToken}`
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    resultDiv.innerHTML = `<strong>Order Detail Response:</strong><pre>${JSON.stringify(result, null, 2)}</pre>`;
+                    
+                    if (response.ok) {
+                        logToConsole('Order detail loaded successfully', 'success');
+                    } else {
+                        logToConsole(`Order detail failed: ${result.message || 'Unknown error'}`, 'error');
+                    }
+                } else {
+                    resultDiv.innerHTML = '<strong>Error:</strong> No orders found to test';
+                    logToConsole('No orders found for detail test', 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `<strong>Error:</strong> ${error.message}`;
+                logToConsole(`Order detail error: ${error.message}`, 'error');
+            }
+        }
+
+        // Capture console errors
+        window.addEventListener('error', function(event) {
+            consoleErrors++;
+            document.getElementById('consoleErrors').textContent = consoleErrors;
+            logToConsole(`JavaScript Error: ${event.message} at ${event.filename}:${event.lineno}:${event.colno}`, 'error');
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            logToConsole('Debug system initialized', 'info');
+            checkSystemStatus();
+        });
+    </script>
+</body>
+</html>
