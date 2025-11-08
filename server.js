@@ -30,8 +30,10 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      // Allow local styles, inline for small tweaks, Google Fonts and CDNJS (Font Awesome)
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+      // Allow fonts from Google Fonts and CDNJS
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:", "https:"],
       scriptSrc: ["'self'"],
       connectSrc: ["'self'"],
@@ -107,6 +109,23 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Serve static HTML files
 app.use(express.static(__dirname));
+
+// Explicit routes for core assets to avoid Nginx/Proxy SPA fallbacks returning HTML
+app.get('/styles.css', (req, res) => {
+  res.type('text/css');
+  res.sendFile(path.join(__dirname, 'styles.css'));
+});
+
+app.get('/script.js', (req, res) => {
+  res.type('application/javascript');
+  res.sendFile(path.join(__dirname, 'script.js'));
+});
+
+// Optional: checkout page stylesheet
+app.get('/checkout.css', (req, res) => {
+  res.type('text/css');
+  res.sendFile(path.join(__dirname, 'checkout.css'));
+});
 
 // Route cho trang chủ và các trang HTML
 app.get('/', (req, res) => {
