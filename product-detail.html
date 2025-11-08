@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết sản phẩm - Điện Máy Xanh</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Product detail specific styles */
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .product-detail-main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .product-images {
+            position: sticky;
+            top: 100px;
+        }
+
+        .main-image {
+            width: 100%;
+            height: 500px;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            border: 2px solid #f1f5f9;
+        }
+
+        .main-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: transform 0.3s;
+        }
+
+        .main-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .thumbnail-images {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding: 8px 0;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+            flex-shrink: 0;
+        }
+
+        .thumbnail:hover {
+            border-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .thumbnail.active {
+            border-color: #2563eb;
+        }
+
+        .thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 0;
+        }
+
+        .product-category {
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .product-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1e293b;
+            line-height: 1.3;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .rating-stars {
+            color: #fbbf24;
+            font-size: 16px;
+        }
+
+        .rating-text {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .rating-count {
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .rating-count:hover {
+            text-decoration: underline;
+        }
+
+        .product-price-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .current-price {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 8px;
+        }
+
+        .price-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .original-price {
+            font-size: 18px;
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .discount-percent {
+            background: #fef3c7;
+            color: #f59e0b;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .savings {
+            color: #10b981;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .product-specs {
+            margin-bottom: 24px;
+        }
+
+        .specs-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .specs-list {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .spec-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .spec-label {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .spec-value {
+            color: #1e293b;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: #f1f5f9;
+            color: #475569;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            border: none;
+            text-align: center;
+            font-size: 16px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .quantity-input:focus {
+            outline: none;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .btn-add-to-cart {
+            flex: 1;
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-add-to-cart:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-buy-now {
+            flex: 1;
+            padding: 12px 24px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-buy-now:hover {
+            background: #059669;
+        }
+
+        .btn-wishlist-detail {
+            width: 48px;
+            height: 48px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #64748b;
+        }
+
+        .btn-wishlist-detail:hover {
+            border-color: #ef4444;
+            color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .btn-wishlist-detail.active {
+            border-color: #ef4444;
+            background: #ef4444;
+            color: white;
+        }
+
+        .product-features {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .features-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1e293b;
+        }
+
+        .features-list {
+            list-style: none;
+        }
+
+        .features-list li {
+            padding: 6px 0;
+            color: #475569;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .product-services {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .service-icon {
+            width: 40px;
+            height: 40px;
+            background: #2563eb;
+            color: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .service-text {
+            flex: 1;
+        }
+
+        .service-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .service-desc {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* Product tabs */
+        .product-tabs {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 2px solid #f1f5f9;
+            margin-bottom: 24px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+        }
+
+        .tab-btn:hover {
+            color: #2563eb;
+        }
+
+        .tab-btn.active {
+            color: #2563eb;
+            border-bottom-color: #2563eb;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .description-content {
+            line-height: 1.6;
+            color: #475569;
+        }
+
+        .description-content h3 {
+            color: #1e293b;
+            margin-bottom: 12px;
+            margin-top: 24px;
+        }
+
+        .description-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .description-content ul {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        .description-content li {
+            margin-bottom: 6px;
+        }
+
+        /* Reviews */
+        .reviews-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .reviews-stats {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .overall-rating {
+            text-align: center;
+        }
+
+        .rating-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1;
+        }
+
+        .rating-stars-large {
+            color: #fbbf24;
+            font-size: 20px;
+            margin: 8px 0;
+        }
+
+        .rating-count-large {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .rating-breakdown {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .rating-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rating-label {
+            font-size: 12px;
+            color: #64748b;
+            width: 40px;
+        }
+
+        .rating-progress {
+            flex: 1;
+            height: 8px;
+            background: #f1f5f9;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .rating-progress-bar {
+            height: 100%;
+            background: #fbbf24;
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+
+        .rating-percent {
+            font-size: 12px;
+            color: #64748b;
+            width: 30px;
+            text-align: right;
+        }
+
+        .btn-write-review {
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-write-review:hover {
+            background: #1d4ed8;
+        }
+
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .review-item {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .reviewer-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: #2563eb;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .reviewer-details h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .review-date {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .review-rating {
+            color: #fbbf24;
+            font-size: 14px;
+        }
+
+        .review-content {
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .review-images {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .review-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .review-image:hover {
+            border-color: #2563eb;
+        }
+
+        .review-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .review-actions {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+        }
+
+        .review-action {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .review-action:hover {
+            background: #f1f5f9;
+            color: #2563eb;
+        }
+
+        .review-action.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        /* Related products */
+        .related-products {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .related-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .related-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .view-all-btn {
+            padding: 8px 16px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .view-all-btn:hover {
+            background: #1d4ed8;
+        }
+
+        .related-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .related-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .related-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .related-image {
+            width: 100%;
+            height: 150px;
+            overflow: hidden;
+        }
+
+        .related-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .related-card:hover .related-image img {
+            transform: scale(1.05);
+        }
+
+        .related-info {
+            padding: 12px;
+        }
+
+        .related-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1e293b;
+            margin-bottom: 8px;
+            height: 2.4em;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .related-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .related-rating {
+            color: #fbbf24;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        /* Modal for review */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .close-modal {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: #f1f5f9;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #64748b;
+            transition: all 0.3s;
+        }
+
+        .close-modal:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .rating-input {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .star-input {
+            font-size: 24px;
+            color: #e2e8f0;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .star-input:hover,
+        .star-input.active {
+            color: #fbbf24;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 120px;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .image-upload {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .upload-btn {
+            width: 80px;
+            height: 80px;
+            border: 2px dashed #e2e8f0;
+            border-radius: 8px;
+            background: #f8fafc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #94a3b8;
+            transition: all 0.3s;
+        }
+
+        .upload-btn:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+            background: #f0f9ff;
+        }
+
+        .upload-preview {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+        }
+
+        .upload-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .remove-preview {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            padding: 12px 24px;
+            background: #f1f5f9;
+            color: #475569;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .btn-submit {
+            padding: 12px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:hover {
+            background: #1d4ed8;
+        }
+
+        @media (max-width: 768px) {
+            .product-detail-main {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 20px;
+            }
+
+            .product-images {
+                position: static;
+            }
+
+            .main-image {
+                height: 300px;
+            }
+
+            .product-title {
+                font-size: 24px;
+            }
+
+            .current-price {
+                font-size: 28px;
+            }
+
+            .specs-list {
+                grid-template-columns: 1fr;
+            }
+
+            .product-actions {
+                flex-direction: column;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .product-services {
+                grid-template-columns: 1fr;
+            }
+
+            .related-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 16px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                margin: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-detail-container {
+                padding: 10px;
+            }
+
+            .product-detail-main {
+                padding: 16px;
+            }
+
+            .main-image {
+                height: 250px;
+            }
+
+            .thumbnail {
+                width: 60px;
+                height: 60px;
+            }
+
+            .tabs-header {
+                overflow-x: auto;
+            }
+
+            .tab-btn {
+                padding: 10px 16px;
+                font-size: 14px;
+                white-space: nowrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (same as other pages) -->
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1>Điện Máy Xanh</h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+                    <button class="search-btn" onclick="searchProducts()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="header-actions">
+                    <div class="user-menu" id="userMenu">
+                        <a href="login.html" class="login-btn">
+                            <i class="fas fa-user"></i>
+                            <span>Đăng nhập</span>
+                        </a>
+                    </div>
+                    <a href="cart.html" class="cart-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li><a href="home.html">Trang chủ</a></li>
+                    <li><a href="products.html?category=dien-thoai">Điện thoại</a></li>
+                    <li><a href="products.html?category=laptop">Laptop</a></li>
+                    <li><a href="products.html?category=may-tinh-bang">Máy tính bảng</a></li>
+                    <li><a href="products.html?category=phu-kien">Phụ kiện</a></li>
+                    <li><a href="orders.html">Đơn hàng</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="product-detail-container">
+            <!-- Breadcrumb -->
+            <div class="breadcrumb" id="breadcrumb">
+                <a href="home.html">Trang chủ</a>
+                <span>/</span>
+                <a href="products.html">Sản phẩm</a>
+                <span>/</span>
+                <span id="productName">Chi tiết sản phẩm</span>
+            </div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading" style="text-align: center; padding: 60px;">
+                <div class="spinner"></div>
+                <p>Đang tải sản phẩm...</p>
+            </div>
+
+            <!-- Product Detail -->
+            <div class="product-detail-main" id="productDetail" style="display: none;">
+                <!-- Product Images -->
+                <div class="product-images">
+                    <div class="main-image">
+                        <img id="mainImage" src="" alt="">
+                    </div>
+                    <div class="thumbnail-images" id="thumbnailImages">
+                        <!-- Thumbnails will be loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Product Info -->
+                <div class="product-info">
+                    <div class="product-category" id="productCategory"></div>
+                    <h1 class="product-title" id="productTitle"></h1>
+                    
+                    <div class="product-rating">
+                        <div class="rating-stars" id="productRating"></div>
+                        <span class="rating-text" id="ratingText"></span>
+                        <a href="#reviews" class="rating-count" id="ratingCount"></a>
+                    </div>
+
+                    <div class="product-price-section">
+                        <div class="current-price" id="currentPrice"></div>
+                        <div class="price-row">
+                            <span class="original-price" id="originalPrice"></span>
+                            <span class="discount-percent" id="discountPercent"></span>
+                        </div>
+                        <div class="savings" id="savings"></div>
+                    </div>
+
+                    <div class="product-specs">
+                        <h3 class="specs-title">Thông số kỹ thuật</h3>
+                        <div class="specs-list" id="specsList">
+                            <!-- Specs will be loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="product-features">
+                        <h3 class="features-title">Tính năng nổi bật</h3>
+                        <ul class="features-list" id="featuresList">
+                            <!-- Features will be loaded dynamically -->
+                        </ul>
+                    </div>
+
+                    <div class="product-actions">
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                            <input type="number" class="quantity-input" id="quantity" value="1" min="1" max="99">
+                            <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn-add-to-cart" onclick="addToCart()">
+                                <i class="fas fa-cart-plus"></i>
+                                Thêm vào giỏ hàng
+                            </button>
+                            <button class="btn-buy-now" onclick="buyNow()">
+                                <i class="fas fa-bolt"></i>
+                                Mua ngay
+                            </button>
+                        </div>
+                        <button class="btn-wishlist-detail" onclick="toggleWishlist()" id="wishlistBtn" title="Yêu thích">
+                            <i class="far fa-heart"></i>
+                        </button>
+                    </div>
+
+                    <div class="product-services">
+                        <div class="service-item">
+                            <div class="service-icon">
+                                <i class="fas fa-shipping-fast"></i>
+                            </div>
+                            <div class="service-text">
+                                <div class="service-title">Giao hàng nhanh</div>
+                                <div class="service-desc">Miễn phí trong 2-3 ngày</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="service-text">
+                                <div class="service-title">Bảo hành chính hãng</div>
+                                <div class="service-desc">12 tháng tại trung tâm bảo hành</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon">
+                                <i class="fas fa-undo"></i>
+                            </div>
+                            <div class="service-text">
+                                <div class="service-title">Đổi trả 30 ngày</div>
+                                <div class="service-desc">Nếu sản phẩm lỗi</div>
+                            </div>
+                        </div>
+                        <div class="service-item">
+                            <div class="service-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <div class="service-text">
+                                <div class="service-title">Hỗ trợ 24/7</div>
+                                <div class="service-desc">Tư vấn và giải đáp thắc mắc</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Tabs -->
+            <div class="product-tabs" id="productTabs" style="display: none;">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="switchTab('description')">Mô tả sản phẩm</button>
+                    <button class="tab-btn" onclick="switchTab('specifications')">Thông số kỹ thuật</button>
+                    <button class="tab-btn" onclick="switchTab('reviews')">Đánh giá (<span id="reviewCount">0</span>)</button>
+                </div>
+
+                <div class="tab-content active" id="descriptionTab">
+                    <div class="description-content" id="descriptionContent">
+                        <!-- Description will be loaded dynamically -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="specificationsTab">
+                    <div class="specs-list" id="fullSpecsList">
+                        <!-- Full specifications will be loaded dynamically -->
+                    </div>
+                </div>
+
+                <div class="tab-content" id="reviewsTab">
+                    <div class="reviews-header">
+                        <div class="reviews-stats">
+                            <div class="overall-rating">
+                                <div class="rating-number" id="overallRating">0</div>
+                                <div class="rating-stars-large" id="overallStars"></div>
+                                <div class="rating-count-large" id="overallCount">0 đánh giá</div>
+                            </div>
+                            <div class="rating-breakdown" id="ratingBreakdown">
+                                <!-- Rating breakdown will be loaded dynamically -->
+                            </div>
+                        </div>
+                        <button class="btn-write-review" onclick="openReviewModal()">
+                            <i class="fas fa-edit"></i> Viết đánh giá
+                        </button>
+                    </div>
+
+                    <div class="reviews-list" id="reviewsList">
+                        <!-- Reviews will be loaded dynamically -->
+                    </div>
+
+                    <div class="pagination" id="reviewPagination">
+                        <!-- Pagination will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Related Products -->
+            <div class="related-products" id="relatedProducts" style="display: none;">
+                <div class="related-header">
+                    <h2 class="related-title">Sản phẩm liên quan</h2>
+                    <a href="#" class="view-all-btn">Xem tất cả</a>
+                </div>
+                <div class="related-grid" id="relatedGrid">
+                    <!-- Related products will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Review Modal -->
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Viết đánh giá</h2>
+                <button class="close-modal" onclick="closeReviewModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <form id="reviewForm" onsubmit="submitReview(event)">
+                <div class="form-group">
+                    <label class="form-label">Đánh giá của bạn</label>
+                    <div class="rating-input" id="ratingInput">
+                        <span class="star-input" data-rating="1">⭐</span>
+                        <span class="star-input" data-rating="2">⭐</span>
+                        <span class="star-input" data-rating="3">⭐</span>
+                        <span class="star-input" data-rating="4">⭐</span>
+                        <span class="star-input" data-rating="5">⭐</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="reviewTitle">Tiêu đề đánh giá</label>
+                    <input type="text" id="reviewTitle" class="form-input" placeholder="Nhập tiêu đề đánh giá" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="reviewContent">Nội dung đánh giá</label>
+                    <textarea id="reviewContent" class="form-textarea" placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Hình ảnh (tối đa 5 ảnh)</label>
+                    <div class="image-upload" id="imageUpload">
+                        <div class="upload-btn" onclick="document.getElementById('reviewImages').click()">
+                            <i class="fas fa-plus"></i>
+                        </div>
+                        <input type="file" id="reviewImages" multiple accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-cancel" onclick="closeReviewModal()">Hủy</button>
+                    <button type="submit" class="btn-submit">Gửi đánh giá</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Về chúng tôi</h3>
+                    <ul>
+                        <li><a href="#">Giới thiệu</a></li>
+                        <li><a href="#">Tuyển dụng</a></li>
+                        <li><a href="#">Tin tức</a></li>
+                        <li><a href="#">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Hỗ trợ khách hàng</h3>
+                    <ul>
+                        <li><a href="#">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Chính sách bảo hành</a></li>
+                        <li><a href="#">Giao hàng & thanh toán</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Thông tin liên hệ</h3>
+                    <p><i class="fas fa-phone"></i> Hotline: 1900.1900</p>
+                    <p><i class="fas fa-envelope"></i> Email: support@dienmayxanh.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Nguyễn Trãi, Q.1, TP.HCM</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Kết nối với chúng tôi</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Điện Máy Xanh. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentProduct = null;
+        let currentRating = 0;
+        let reviewImages = [];
+        let currentReviewPage = 1;
+        let reviewsPerPage = 5;
+        
+        // Load product when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProduct();
+            updateCartCount();
+            checkUserLogin();
+        });
+        
+        // Load product details
+        async function loadProduct() {
+            showLoading(true);
+            
+            try {
+                // Get product slug from URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const productSlug = urlParams.get('product');
+                
+                if (!productSlug) {
+                    showError('Không tìm thấy sản phẩm');
+                    return;
+                }
+                
+                // Fetch product details
+                const response = await fetch(`/api/products/${productSlug}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentProduct = data.data;
+                    renderProduct();
+                    loadReviews();
+                    loadRelatedProducts();
+                } else {
+                    showError(data.message || 'Không tìm thấy sản phẩm');
+                }
+            } catch (error) {
+                console.error('Error loading product:', error);
+                showError('Có lỗi xảy ra khi tải sản phẩm');
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Render product details
+        function renderProduct() {
+            if (!currentProduct) return;
+            
+            // Update breadcrumb
+            document.getElementById('productName').textContent = currentProduct.name;
+            
+            // Update images
+            const mainImage = document.getElementById('mainImage');
+            mainImage.src = currentProduct.images[0] || 'https://via.placeholder.com/600x600';
+            mainImage.alt = currentProduct.name;
+            
+            // Update thumbnails
+            const thumbnailImages = document.getElementById('thumbnailImages');
+            thumbnailImages.innerHTML = currentProduct.images.map((image, index) => `
+                <div class="thumbnail ${index === 0 ? 'active' : ''}" onclick="changeMainImage('${image}', this)">
+                    <img src="${image}" alt="${currentProduct.name} ${index + 1}">
+                </div>
+            `).join('');
+            
+            // Update basic info
+            document.getElementById('productCategory').textContent = currentProduct.category?.name || 'Danh mục';
+            document.getElementById('productTitle').textContent = currentProduct.name;
+            
+            // Update rating
+            const rating = currentProduct.rating || 0;
+            const reviewCount = currentProduct.reviews?.length || 0;
+            document.getElementById('productRating').innerHTML = renderStars(rating);
+            document.getElementById('ratingText').textContent = `${rating.toFixed(1)} / 5`;
+            document.getElementById('ratingCount').textContent = `${reviewCount} đánh giá`;
+            
+            // Update price
+            const price = currentProduct.price;
+            const originalPrice = currentProduct.originalPrice;
+            const discount = currentProduct.discount;
+            
+            document.getElementById('currentPrice').textContent = formatPrice(price);
+            
+            if (originalPrice && originalPrice > price) {
+                document.getElementById('originalPrice').textContent = formatPrice(originalPrice);
+                document.getElementById('discountPercent').textContent = `-${discount}%`;
+                document.getElementById('savings').textContent = `Tiết kiệm: ${formatPrice(originalPrice - price)}`;
+            } else {
+                document.getElementById('originalPrice').style.display = 'none';
+                document.getElementById('discountPercent').style.display = 'none';
+                document.getElementById('savings').style.display = 'none';
+            }
+            
+            // Update specs
+            const specsList = document.getElementById('specsList');
+            const specs = currentProduct.specifications || {};
+            const specEntries = Object.entries(specs).slice(0, 6); // Show first 6 specs
+            
+            specsList.innerHTML = specEntries.map(([key, value]) => `
+                <div class="spec-item">
+                    <span class="spec-label">${key}</span>
+                    <span class="spec-value">${value}</span>
+                </div>
+            `).join('');
+            
+            // Update features
+            const featuresList = document.getElementById('featuresList');
+            const features = currentProduct.features || [];
+            
+            featuresList.innerHTML = features.slice(0, 5).map(feature => `
+                <li>${feature}</li>
+            `).join('');
+            
+            // Update description
+            document.getElementById('descriptionContent').innerHTML = currentProduct.description || '<p>Chưa có mô tả cho sản phẩm này</p>';
+            
+            // Update full specifications
+            const fullSpecsList = document.getElementById('fullSpecsList');
+            fullSpecsList.innerHTML = Object.entries(specs).map(([key, value]) => `
+                <div class="spec-item">
+                    <span class="spec-label">${key}</span>
+                    <span class="spec-value">${value}</span>
+                </div>
+            `).join('');
+            
+            // Show product details
+            document.getElementById('productDetail').style.display = 'grid';
+            document.getElementById('productTabs').style.display = 'block';
+            document.getElementById('relatedProducts').style.display = 'block';
+            
+            // Check if product is in wishlist
+            checkWishlistStatus();
+        }
+        
+        // Change main image
+        function changeMainImage(imageSrc, thumbnailElement) {
+            document.getElementById('mainImage').src = imageSrc;
+            
+            // Update active thumbnail
+            document.querySelectorAll('.thumbnail').forEach(thumb => thumb.classList.remove('active'));
+            thumbnailElement.classList.add('active');
+        }
+        
+        // Change quantity
+        function changeQuantity(delta) {
+            const quantityInput = document.getElementById('quantity');
+            const currentValue = parseInt(quantityInput.value);
+            const newValue = currentValue + delta;
+            
+            if (newValue >= 1 && newValue <= 99) {
+                quantityInput.value = newValue;
+            }
+        }
+        
+        // Add to cart
+        async function addToCart() {
+            if (!currentProduct) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const quantity = parseInt(document.getElementById('quantity').value);
+                
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId: currentProduct._id,
+                        quantity: quantity
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert(`Đã thêm ${quantity} sản phẩm vào giỏ hàng`);
+                    updateCartCount();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra');
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            }
+        }
+        
+        // Buy now
+        async function buyNow() {
+            if (!currentProduct) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Vui lòng đăng nhập để mua hàng');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const quantity = parseInt(document.getElementById('quantity').value);
+                
+                // Add to cart first
+                const addResponse = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId: currentProduct._id,
+                        quantity: quantity
+                    })
+                });
+
+                const addData = await addResponse.json();
+                if (addData.success) {
+                    // Redirect to cart
+                    window.location.href = 'cart.html';
+                } else {
+                    alert(addData.message || 'Có lỗi xảy ra');
+                }
+            } catch (error) {
+                console.error('Error buying now:', error);
+                alert('Có lỗi xảy ra khi mua hàng');
+            }
+        }
+        
+        // Toggle wishlist
+        async function toggleWishlist() {
+            if (!currentProduct) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Vui lòng đăng nhập để thêm sản phẩm vào yêu thích');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await fetch('/api/wishlist/toggle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId: currentProduct._id
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const wishlistBtn = document.getElementById('wishlistBtn');
+                    if (data.isInWishlist) {
+                        wishlistBtn.classList.add('active');
+                        wishlistBtn.innerHTML = '<i class="fas fa-heart"></i>';
+                    } else {
+                        wishlistBtn.classList.remove('active');
+                        wishlistBtn.innerHTML = '<i class="far fa-heart"></i>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling wishlist:', error);
+            }
+        }
+        
+        // Check wishlist status
+        async function checkWishlistStatus() {
+            if (!currentProduct) return;
+            
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+
+                const response = await fetch('/api/wishlist/check', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId: currentProduct._id
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success && data.isInWishlist) {
+                    const wishlistBtn = document.getElementById('wishlistBtn');
+                    wishlistBtn.classList.add('active');
+                    wishlistBtn.innerHTML = '<i class="fas fa-heart"></i>';
+                }
+            } catch (error) {
+                console.error('Error checking wishlist:', error);
+            }
+        }
+        
+        // Switch tab
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Scroll to tabs
+            document.querySelector('.product-tabs').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Load reviews
+        async function loadReviews() {
+            if (!currentProduct) return;
+            
+            try {
+                const response = await fetch(`/api/products/${currentProduct.slug}/reviews?page=${currentReviewPage}&limit=${reviewsPerPage}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderReviews(data.data);
+                    renderReviewStats(data.stats);
+                    renderReviewPagination(data.pagination);
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+            }
+        }
+        
+        // Render reviews
+        function renderReviews(reviews) {
+            const reviewsList = document.getElementById('reviewsList');
+            
+            if (!reviews || reviews.length === 0) {
+                reviewsList.innerHTML = '<p style="text-align: center; color: #64748b; padding: 40px;">Chưa có đánh giá nào</p>';
+                return;
+            }
+            
+            reviewsList.innerHTML = reviews.map(review => `
+                <div class="review-item">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">
+                                ${review.user?.name ? review.user.name.charAt(0).toUpperCase() : 'U'}
+                            </div>
+                            <div class="reviewer-details">
+                                <h4>${review.user?.name || 'Người dùng'}</h4>
+                                <div class="review-date">${formatDate(review.createdAt)}</div>
+                            </div>
+                        </div>
+                        <div class="review-rating">${renderStars(review.rating)}</div>
+                    </div>
+                    <div class="review-content">
+                        <strong>${review.title}</strong>
+                        <p>${review.content}</p>
+                    </div>
+                    ${review.images && review.images.length > 0 ? `
+                        <div class="review-images">
+                            ${review.images.map(image => `
+                                <div class="review-image" onclick="viewImage('${image}')">
+                                    <img src="${image}" alt="Review image">
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                    <div class="review-actions">
+                        <button class="review-action" onclick="likeReview('${review._id}')">
+                            <i class="far fa-thumbs-up"></i>
+                            <span>Hữu ích (${review.helpful || 0})</span>
+                        </button>
+                        <button class="review-action" onclick="reportReview('${review._id}')">
+                            <i class="far fa-flag"></i>
+                            <span>Báo cáo</span>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Render review stats
+        function renderReviewStats(stats) {
+            if (!stats) return;
+            
+            document.getElementById('overallRating').textContent = stats.averageRating.toFixed(1);
+            document.getElementById('overallStars').innerHTML = renderStars(stats.averageRating);
+            document.getElementById('overallCount').textContent = `${stats.totalReviews} đánh giá`;
+            document.getElementById('reviewCount').textContent = stats.totalReviews;
+            
+            // Render rating breakdown
+            const ratingBreakdown = document.getElementById('ratingBreakdown');
+            const breakdown = stats.ratingBreakdown || {};
+            
+            ratingBreakdown.innerHTML = [5, 4, 3, 2, 1].map(rating => {
+                const count = breakdown[rating] || 0;
+                const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0;
+                
+                return `
+                    <div class="rating-bar">
+                        <span class="rating-label">${rating}⭐</span>
+                        <div class="rating-progress">
+                            <div class="rating-progress-bar" style="width: ${percentage}%"></div>
+                        </div>
+                        <span class="rating-percent">${Math.round(percentage)}%</span>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Render review pagination
+        function renderReviewPagination(pagination) {
+            const paginationContainer = document.getElementById('reviewPagination');
+            
+            if (!pagination || pagination.totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            if (pagination.currentPage > 1) {
+                html += `<button class="page-btn" onclick="changeReviewPage(${pagination.currentPage - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </button>`;
+            }
+            
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(pagination.totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            if (startPage > 1) {
+                html += `<button class="page-btn" onclick="changeReviewPage(1)">1</button>`;
+                if (startPage > 2) {
+                    html += `<span class="page-btn" style="border: none; cursor: default;">...</span>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="page-btn ${i === pagination.currentPage ? 'active' : ''}" onclick="changeReviewPage(${i})">${i}</button>`;
+            }
+            
+            if (endPage < pagination.totalPages) {
+                if (endPage < pagination.totalPages - 1) {
+                    html += `<span class="page-btn" style="border: none; cursor: default;">...</span>`;
+                }
+                html += `<button class="page-btn" onclick="changeReviewPage(${pagination.totalPages})">${pagination.totalPages}</button>`;
+            }
+            
+            // Next button
+            if (pagination.currentPage < pagination.totalPages) {
+                html += `<button class="page-btn" onclick="changeReviewPage(${pagination.currentPage + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </button>`;
+            }
+            
+            paginationContainer.innerHTML = html;
+        }
+        
+        // Change review page
+        function changeReviewPage(page) {
+            currentReviewPage = page;
+            loadReviews();
+            document.querySelector('.product-tabs').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Open review modal
+        function openReviewModal() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert('Vui lòng đăng nhập để viết đánh giá');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            document.getElementById('reviewModal').classList.add('active');
+            currentRating = 0;
+            reviewImages = [];
+            document.getElementById('reviewForm').reset();
+            updateStarRating();
+        }
+        
+        // Close review modal
+        function closeReviewModal() {
+            document.getElementById('reviewModal').classList.remove('active');
+        }
+        
+        // Update star rating
+        function updateStarRating() {
+            const stars = document.querySelectorAll('.star-input');
+            stars.forEach((star, index) => {
+                if (index < currentRating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+        
+        // Handle star click
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('star-input')) {
+                currentRating = parseInt(e.target.dataset.rating);
+                updateStarRating();
+            }
+        });
+        
+        // Handle image upload
+        function handleImageUpload(event) {
+            const files = event.target.files;
+            const maxImages = 5;
+            
+            if (reviewImages.length + files.length > maxImages) {
+                alert(`Chỉ được tải lên tối đa ${maxImages} hình ảnh`);
+                return;
+            }
+            
+            Array.from(files).forEach(file => {
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    alert('Kích thước ảnh không được vượt quá 5MB');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    reviewImages.push(e.target.result);
+                    updateReviewImagePreview();
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+        
+        // Update review image preview
+        function updateReviewImagePreview() {
+            const imageUpload = document.getElementById('imageUpload');
+            const uploadBtn = imageUpload.querySelector('.upload-btn');
+            
+            // Remove existing previews
+            imageUpload.querySelectorAll('.upload-preview').forEach(preview => preview.remove());
+            
+            // Add new previews
+            reviewImages.forEach((image, index) => {
+                const preview = document.createElement('div');
+                preview.className = 'upload-preview';
+                preview.innerHTML = `
+                    <img src="${image}" alt="Preview">
+                    <button type="button" class="remove-preview" onclick="removeReviewImage(${index})">×</button>
+                `;
+                imageUpload.appendChild(preview);
+            });
+            
+            // Show/hide upload button
+            if (reviewImages.length >= 5) {
+                uploadBtn.style.display = 'none';
+            } else {
+                uploadBtn.style.display = 'flex';
+            }
+        }
+        
+        // Remove review image
+        function removeReviewImage(index) {
+            reviewImages.splice(index, 1);
+            updateReviewImagePreview();
+        }
+        
+        // Submit review
+        async function submitReview(event) {
+            event.preventDefault();
+            
+            if (currentRating === 0) {
+                alert('Vui lòng chọn số sao đánh giá');
+                return;
+            }
+            
+            const title = document.getElementById('reviewTitle').value;
+            const content = document.getElementById('reviewContent').value;
+            
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/products/${currentProduct.slug}/reviews`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        rating: currentRating,
+                        title: title,
+                        content: content,
+                        images: reviewImages
+                    })
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    alert('Cảm ơn bạn đã đánh giá sản phẩm!');
+                    closeReviewModal();
+                    loadReviews();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra khi gửi đánh giá');
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                alert('Có lỗi xảy ra khi gửi đánh giá');
+            }
+        }
+        
+        // Like review
+        async function likeReview(reviewId) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`/api/reviews/${reviewId}/like`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                if (data.success) {
+                    loadReviews();
+                }
+            } catch (error) {
+                console.error('Error liking review:', error);
+            }
+        }
+        
+        // Report review
+        async function reportReview(reviewId) {
+            if (confirm('Bạn có muốn báo cáo đánh giá này không?')) {
+                try {
+                    const token = localStorage.getItem('token');
+                    const response = await fetch(`/api/reviews/${reviewId}/report`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    if (data.success) {
+                        alert('Đã gửi báo cáo. Cảm ơn bạn!');
+                    }
+                } catch (error) {
+                    console.error('Error reporting review:', error);
+                }
+            }
+        }
+        
+        // Load related products
+        async function loadRelatedProducts() {
+            if (!currentProduct) return;
+            
+            try {
+                const response = await fetch(`/api/products/related/${currentProduct._id}?limit=8`);
+                const data = await response.json();
+                
+                if (data.success && data.data.length > 0) {
+                    renderRelatedProducts(data.data);
+                }
+            } catch (error) {
+                console.error('Error loading related products:', error);
+            }
+        }
+        
+        // Render related products
+        function renderRelatedProducts(products) {
+            const relatedGrid = document.getElementById('relatedGrid');
+            
+            relatedGrid.innerHTML = products.map(product => `
+                <div class="related-card" onclick="window.location.href='product-detail.html?product=${product.slug}'">
+                    <div class="related-image">
+                        <img src="${product.images[0] || 'https://via.placeholder.com/200x150'}" alt="${product.name}">
+                    </div>
+                    <div class="related-info">
+                        <div class="related-name">${product.name}</div>
+                        <div class="related-price">${formatPrice(product.price)}</div>
+                        <div class="related-rating">${renderStars(product.rating || 0)}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // View image
+        function viewImage(imageSrc) {
+            window.open(imageSrc, '_blank');
+        }
+        
+        // Search products
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            if (searchTerm) {
+                window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+        
+        // Update cart count
+        function updateCartCount() {
+            if (typeof localStorage === 'undefined') {
+                document.getElementById('cartCount').textContent = 0;
+                return;
+            }
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const cartCount = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById('cartCount').textContent = cartCount;
+        }
+        
+        // Check user login
+        function checkUserLogin() {
+            if (typeof localStorage === 'undefined') return;
+            const token = localStorage.getItem('token');
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            const userMenu = document.getElementById('userMenu');
+            if (token && user.name) {
+                userMenu.innerHTML = `
+                    <div class="user-dropdown">
+                        <button class="user-btn">
+                            <i class="fas fa-user"></i>
+                            <span>${user.name}</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="dropdown-content">
+                            <a href="profile.html">Thông tin cá nhân</a>
+                            <a href="orders.html">Đơn hàng của tôi</a>
+                            <a href="wishlist.html">Sản phẩm yêu thích</a>
+                            <a href="#" onclick="logout()">Đăng xuất</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Logout
+        function logout() {
+            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
+                if (typeof localStorage !== 'undefined') {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('user');
+                }
+                window.location.href = 'home.html';
+            }
+        }
+        
+        // Utility functions
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+        
+        function renderStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '⭐';
+            }
+            if (hasHalfStar) {
+                stars += '⭐';
+            }
+            
+            return stars;
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+            document.getElementById('productDetail').style.display = show ? 'none' : 'grid';
+            document.getElementById('productTabs').style.display = show ? 'none' : 'block';
+            document.getElementById('relatedProducts').style.display = show ? 'none' : 'block';
+        }
+        
+        function showError(message) {
+            document.getElementById('loading').innerHTML = `
+                <div style="text-align: center; padding: 60px; color: #ef4444;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 16px;"></i>
+                    <p>${message}</p>
+                    <button onclick="window.location.href='home.html'" style="margin-top: 16px; padding: 12px 24px; background: #2563eb; color: white; border: none; border-radius: 8px; cursor: pointer;">
+                        Về trang chủ
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts();
+            }
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('reviewModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeReviewModal();
+            }
+        });
+        
+        // Handle quantity input change
+        document.getElementById('quantity').addEventListener('change', function() {
+            const value = parseInt(this.value);
+            if (value < 1) this.value = 1;
+            if (value > 99) this.value = 99;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Điện Máy Xanh</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Login specific styles */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-header {
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .login-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+
+        .login-form {
+            padding: 40px 30px;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .form-group.error input {
+            border-color: #ef4444;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 14px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-group.error .error-message {
+            display: block;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .remember-me input[type="checkbox"] {
+            width: auto;
+        }
+
+        .forgot-password {
+            color: #2563eb;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .forgot-password:hover {
+            text-decoration: underline;
+        }
+
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 24px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 16px;
+            position: relative;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .social-login {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .social-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .social-btn:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .signup-link {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .signup-link a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e5e7eb;
+            border-top: 2px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .alert.success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #bbf7d0;
+        }
+
+        .alert.error {
+            background: #fef2f2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        .alert.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h2>Đăng nhập</h2>
+                <p>Chào mừng bạn quay lại!</p>
+            </div>
+            
+            <form class="login-form" id="loginForm">
+                <div class="alert" id="alertMessage"></div>
+                
+                <div class="form-group">
+                    <label for="email">Email hoặc Số điện thoại</label>
+                    <input type="text" id="email" name="email" required placeholder="Nhập email hoặc số điện thoại">
+                    <div class="error-message" id="emailError"></div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Mật khẩu</label>
+                    <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu">
+                    <div class="error-message" id="passwordError"></div>
+                </div>
+                
+                <div class="form-options">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember" name="remember">
+                        <label for="remember">Ghi nhớ đăng nhập</label>
+                    </div>
+                    <a href="forgot-password.html" class="forgot-password">Quên mật khẩu?</a>
+                </div>
+                
+                <button type="submit" class="btn-primary" id="loginBtn">
+                    Đăng nhập
+                </button>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                </div>
+                
+                <div class="divider">
+                    <span>hoặc đăng nhập với</span>
+                </div>
+                
+                <div class="social-login">
+                    <button type="button" class="social-btn" onclick="loginWithGoogle()">
+                        <i class="fab fa-google"></i>
+                    </button>
+                    <button type="button" class="social-btn" onclick="loginWithFacebook()">
+                        <i class="fab fa-facebook-f"></i>
+                    </button>
+                    <button type="button" class="social-btn" onclick="loginWithApple()">
+                        <i class="fab fa-apple"></i>
+                    </button>
+                </div>
+                
+                <div class="signup-link">
+                    Chưa có tài khoản? <a href="register.html">Đăng ký ngay</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Login form handling
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            clearErrors();
+            
+            // Get form data
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+            
+            // Validate form
+            let isValid = true;
+            
+            if (!email) {
+                showError('email', 'Vui lòng nhập email hoặc số điện thoại');
+                isValid = false;
+            }
+            
+            if (!password) {
+                showError('password', 'Vui lòng nhập mật khẩu');
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // Show loading
+            showLoading(true);
+            
+            try {
+                // Call login API
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store token and user data
+                    if (typeof localStorage !== 'undefined') {
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                    }
+                    
+                    // Show success message
+                    showAlert('Đăng nhập thành công! Đang chuyển hướng...', 'success');
+                    
+                    // Redirect based on user role
+                    setTimeout(() => {
+                        if (data.user.role === 'admin') {
+                            window.location.href = 'admin/dashboard.html';
+                        } else {
+                            // Redirect to previous page or home
+                            let redirectUrl = 'home.html';
+                            if (typeof localStorage !== 'undefined') {
+                                redirectUrl = localStorage.getItem('redirectAfterLogin') || 'home.html';
+                                localStorage.removeItem('redirectAfterLogin');
+                            }
+                            window.location.href = redirectUrl;
+                        }
+                    }, 1500);
+                } else {
+                    // Show error message
+                    showAlert(data.message || 'Đăng nhập thất bại', 'error');
+                    
+                    // Show specific field errors if available
+                    if (data.errors) {
+                        if (data.errors.email) {
+                            showError('email', data.errors.email);
+                        }
+                        if (data.errors.password) {
+                            showError('password', data.errors.password);
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Có lỗi xảy ra. Vui lòng thử lại sau.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        });
+        
+        // Show error message
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            field.parentElement.classList.add('error');
+            errorDiv.textContent = message;
+        }
+        
+        // Clear all errors
+        function clearErrors() {
+            document.querySelectorAll('.form-group').forEach(group => {
+                group.classList.remove('error');
+            });
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.textContent = '';
+            });
+        }
+        
+        // Show loading state
+        function showLoading(show) {
+            const loginBtn = document.getElementById('loginBtn');
+            const loading = document.getElementById('loading');
+            
+            if (show) {
+                loginBtn.disabled = true;
+                loginBtn.textContent = 'Đang đăng nhập...';
+                loading.classList.add('active');
+            } else {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Đăng nhập';
+                loading.classList.remove('active');
+            }
+        }
+        
+        // Show alert message
+        function showAlert(message, type) {
+            const alert = document.getElementById('alertMessage');
+            alert.textContent = message;
+            alert.className = `alert ${type} show`;
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                alert.classList.remove('show');
+            }, 5000);
+        }
+        
+        // Social login functions
+        function loginWithGoogle() {
+            // Implement Google OAuth login
+            window.location.href = '/api/auth/google';
+        }
+        
+        function loginWithFacebook() {
+            // Implement Facebook OAuth login
+            window.location.href = '/api/auth/facebook';
+        }
+        
+        function loginWithApple() {
+            // Implement Apple Sign In
+            window.location.href = '/api/auth/apple';
+        }
+        
+        // Check if user is already logged in
+        window.addEventListener('DOMContentLoaded', function() {
+            if (typeof localStorage !== 'undefined') {
+                const token = localStorage.getItem('token');
+                if (token) {
+                    // User is already logged in, redirect to home
+                    window.location.href = 'home.html';
+                }
+                
+                // Store current URL for redirect after login
+                const currentUrl = window.location.href;
+                localStorage.setItem('redirectAfterLogin', currentUrl);
+            }
+        });
+        
+        // Handle Enter key in form fields
+        document.getElementById('email').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('password').focus();
+            }
+        });
+        
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+    </script>
+</body>
+</html>

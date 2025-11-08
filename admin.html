@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Điện Máy Xanh</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 24px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+        }
+
+        .sidebar li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+
+        .sidebar i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .card-icon.revenue { background: linear-gradient(45deg, #4CAF50, #45a049); }
+        .card-icon.orders { background: linear-gradient(45deg, #2196F3, #1976D2); }
+        .card-icon.products { background: linear-gradient(45deg, #FF9800, #F57C00); }
+        .card-icon.users { background: linear-gradient(45deg, #9C27B0, #7B1FA2); }
+
+        .card-content h3 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .card-content p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .content-section {
+            display: none;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-header h3 {
+            color: #333;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #555;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-info { background: #17a2b8; color: white; }
+
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-processing { background: #cce5ff; color: #004085; }
+        .status-delivered { background: #d4edda; color: #155724; }
+        .status-cancelled { background: #f8d7da; color: #721c24; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 5px;
+            color: white;
+            z-index: 1001;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success { background: #28a745; }
+        .notification.error { background: #dc3545; }
+        .notification.info { background: #17a2b8; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: 2;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+            
+            .dashboard-cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2><i class="fas fa-store"></i> Điện Máy Xanh</h2>
+            <ul>
+                <li><a href="#" data-section="dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" data-section="products"><i class="fas fa-box"></i> Sản phẩm</a></li>
+                <li><a href="#" data-section="orders"><i class="fas fa-shopping-cart"></i> Đơn hàng</a></li>
+                <li><a href="#" data-section="users"><i class="fas fa-users"></i> Người dùng</a></li>
+                <li><a href="#" data-section="reviews"><i class="fas fa-star"></i> Đánh giá</a></li>
+                <li><a href="#" data-section="inventory"><i class="fas fa-warehouse"></i> Kho hàng</a></li>
+                <li><a href="#" data-section="reports"><i class="fas fa-chart-bar"></i> Báo cáo</a></li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="content-section active">
+                <div class="top-bar">
+                    <h1>Dashboard</h1>
+                    <div>
+                        <span id="admin-name">Admin</span>
+                    </div>
+                </div>
+
+                <div class="dashboard-cards">
+                    <div class="dashboard-card">
+                        <div class="card-icon revenue">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="total-revenue">0đ</h3>
+                            <p>Tổng doanh thu</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon orders">
+                            <i class="fas fa-shopping-bag"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="total-orders">0</h3>
+                            <p>Tổng đơn hàng</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon products">
+                            <i class="fas fa-box"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="total-products">0</h3>
+                            <p>Tổng sản phẩm</p>
+                        </div>
+                    </div>
+                    <div class="dashboard-card">
+                        <div class="card-icon users">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3 id="total-users">0</h3>
+                            <p>Tổng người dùng</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Đơn hàng gần đây</h3>
+                        <button class="btn btn-primary" onclick="loadOrders()">
+                            <i class="fas fa-sync"></i> Làm mới
+                        </button>
+                    </div>
+                    <table id="recent-orders-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Khách hàng</th>
+                                <th>Tổng tiền</th>
+                                <th>Trạng thái</th>
+                                <th>Ngày đặt</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recent-orders-body">
+                            <!-- Orders will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Products Section -->
+            <div id="products" class="content-section">
+                <div class="table-header">
+                    <h3>Quản lý sản phẩm</h3>
+                    <button class="btn btn-success" onclick="showAddProductModal()">
+                        <i class="fas fa-plus"></i> Thêm sản phẩm
+                    </button>
+                </div>
+                <table id="products-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Tồn kho</th>
+                            <th>Danh mục</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="products-body">
+                        <!-- Products will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Orders Section -->
+            <div id="orders" class="content-section">
+                <div class="table-header">
+                    <h3>Quản lý đơn hàng</h3>
+                    <button class="btn btn-primary" onclick="loadAllOrders()">
+                        <i class="fas fa-sync"></i> Làm mới
+                    </button>
+                </div>
+                <table id="orders-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th>Ngày đặt</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-body">
+                        <!-- Orders will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Users Section -->
+            <div id="users" class="content-section">
+                <div class="table-header">
+                    <h3>Quản lý người dùng</h3>
+                </div>
+                <table id="users-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Tên</th>
+                            <th>Email</th>
+                            <th>SĐT</th>
+                            <th>Vai trò</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="users-body">
+                        <!-- Users will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Reviews Section -->
+            <div id="reviews" class="content-section">
+                <div class="table-header">
+                    <h3>Quản lý đánh giá</h3>
+                </div>
+                <table id="reviews-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Sản phẩm</th>
+                            <th>Người dùng</th>
+                            <th>Đánh giá</th>
+                            <th>Bình luận</th>
+                            <th>Trạng thái</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reviews-body">
+                        <!-- Reviews will be loaded here -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Inventory Section -->
+            <div id="inventory" class="content-section">
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Quản lý kho hàng</h3>
+                        <button class="btn btn-warning" onclick="showLowStockProducts()">
+                            <i class="fas fa-exclamation-triangle"></i> Sản phẩm sắp hết
+                        </button>
+                    </div>
+                    <table id="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Tồn kho</th>
+                                <th>Đã bán</th>
+                                <th>Giá nhập</th>
+                                <th>Giá bán</th>
+                                <th>Cập nhật</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-body">
+                            <!-- Inventory will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Reports Section -->
+            <div id="reports" class="content-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="report-revenue">0đ</div>
+                        <div class="stat-label">Doanh thu tháng này</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="report-orders">0</div>
+                        <div class="stat-label">Đơn hàng tháng này</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="report-top-product">-</div>
+                        <div class="stat-label">Sản phẩm bán chạy nhất</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="report-new-users">0</div>
+                        <div class="stat-label">Khách hàng mới tháng này</div>
+                    </div>
+                </div>
+
+                <div class="table-container">
+                    <div class="table-header">
+                        <h3>Biểu đồ doanh thu</h3>
+                        <div>
+                            <select id="chart-period" onchange="updateChart()">
+                                <option value="7d">7 ngày</option>
+                                <option value="30d" selected>30 ngày</option>
+                                <option value="90d">90 ngày</option>
+                                <option value="1y">1 năm</option>
+                            </select>
+                            <select id="chart-type" onchange="updateChart()">
+                                <option value="daily">Theo ngày</option>
+                                <option value="monthly">Theo tháng</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="revenue-chart"></canvas>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>Top sản phẩm bán chạy</h3>
+                        </div>
+                        <table id="top-products-table">
+                            <thead>
+                                <tr>
+                                    <th>Sản phẩm</th>
+                                    <th>Số lượng</th>
+                                    <th>Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="top-products-body">
+                                <!-- Top products will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>Doanh thu theo danh mục</h3>
+                        </div>
+                        <table id="category-revenue-table">
+                            <thead>
+                                <tr>
+                                    <th>Danh mục</th>
+                                    <th>Số lượng</th>
+                                    <th>Doanh thu</th>
+                                </tr>
+                            </thead>
+                            <tbody id="category-revenue-body">
+                                <!-- Category revenue will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification"></div>
+
+    <script>
+        // Global variables
+        let currentSection = 'dashboard';
+        let adminToken = (typeof localStorage !== 'undefined') ? localStorage.getItem('adminToken') : null;
+        let revenueChart = null;
+
+        // Check authentication
+        if (!adminToken) {
+            window.location.href = '/login.html?redirect=/admin.html';
+        }
+
+        // Navigation
+        document.querySelectorAll('.sidebar a[data-section]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const section = link.getAttribute('data-section');
+                showSection(section);
+            });
+        });
+
+        function showSection(section) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+
+            // Remove active class from all nav links
+            document.querySelectorAll('.sidebar a').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(section).classList.add('active');
+            
+            // Add active class to clicked link
+            document.querySelector(`[data-section="${section}"]`).classList.add('active');
+
+            currentSection = section;
+
+            // Load data for the section
+            switch(section) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'products':
+                    loadProducts();
+                    break;
+                case 'orders':
+                    loadAllOrders();
+                    break;
+                case 'users':
+                    loadUsers();
+                    break;
+                case 'reviews':
+                    loadReviews();
+                    break;
+                case 'inventory':
+                    loadInventory();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+            }
+        }
+
+        // Utility functions
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(amount);
+        }
+
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('vi-VN');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.add('show');
+
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // API functions
+        async function apiCall(url, options = {}) {
+            const headers = {
+                'Authorization': `Bearer ${adminToken}`,
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            try {
+                const response = await fetch(`/api${url}`, {
+                    ...options,
+                    headers
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.message || 'API call failed');
+                }
+
+                return data;
+            } catch (error) {
+                console.error('API Error:', error);
+                showNotification(error.message, 'error');
+                throw error;
+            }
+        }
+
+        // Load dashboard data
+        async function loadDashboard() {
+            try {
+                const dashboardData = await apiCall('/admin/dashboard');
+                
+                document.getElementById('total-revenue').textContent = formatCurrency(dashboardData.stats.totalRevenue);
+                document.getElementById('total-orders').textContent = dashboardData.stats.totalOrders;
+                document.getElementById('total-products').textContent = dashboardData.stats.totalProducts;
+                document.getElementById('total-users').textContent = dashboardData.stats.totalUsers;
+
+                // Load recent orders
+                const ordersData = await apiCall('/orders?limit=5');
+                displayRecentOrders(ordersData.orders);
+
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function displayRecentOrders(orders) {
+            const tbody = document.getElementById('recent-orders-body');
+            tbody.innerHTML = '';
+
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order._id}</td>
+                    <td>${order.user.name}</td>
+                    <td>${formatCurrency(order.totalAmount)}</td>
+                    <td><span class="status-badge status-${order.status}">${getStatusText(order.status)}</span></td>
+                    <td>${formatDate(order.createdAt)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="viewOrder('${order._id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function getStatusText(status) {
+            const statusMap = {
+                'pending': 'Chờ xử lý',
+                'processing': 'Đang xử lý',
+                'delivered': 'Đã giao',
+                'cancelled': 'Đã hủy'
+            };
+            return statusMap[status] || status;
+        }
+
+        // Load products
+        async function loadProducts() {
+            try {
+                const data = await apiCall('/products?limit=50');
+                displayProducts(data.products);
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        function displayProducts(products) {
+            const tbody = document.getElementById('products-body');
+            tbody.innerHTML = '';
+
+            products.forEach(product => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${product._id}</td>
+                    <td>${product.name}</td>
+                    <td>${formatCurrency(product.price)}</td>
+                    <td>${product.stock}</td>
+                    <td>${product.category?.name || '-'}</td>
+                    <td>
+                        <span class="status-badge ${product.isActive ? 'status-delivered' : 'status-cancelled'}">
+                            ${product.isActive ? 'Hoạt động' : 'Ngừng bán'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="toggleProductStatus('${product._id}', ${!product.isActive})">
+                            <i class="fas fa-${product.isActive ? 'pause' : 'play'}"></i>
+                        </button>
+                        <button class="btn btn-sm btn-info" onclick="editProduct('${product._id}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteProduct('${product._id}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load all orders
+        async function loadAllOrders() {
+            try {
+                const data = await apiCall('/orders?limit=100');
+                displayAllOrders(data.orders);
+            } catch (error) {
+                console.error('Error loading orders:', error);
+            }
+        }
+
+        function displayAllOrders(orders) {
+            const tbody = document.getElementById('orders-body');
+            tbody.innerHTML = '';
+
+            orders.forEach(order => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order._id}</td>
+                    <td>${order.user.name}</td>
+                    <td>${formatCurrency(order.totalAmount)}</td>
+                    <td>
+                        <select class="form-control" onchange="updateOrderStatus('${order._id}', this.value)">
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>Chờ xử lý</option>
+                            <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Đang xử lý</option>
+                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Đã giao</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Đã hủy</option>
+                        </select>
+                    </td>
+                    <td>${formatDate(order.createdAt)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-info" onclick="viewOrder('${order._id}')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load users
+        async function loadUsers() {
+            try {
+                const data = await apiCall('/admin/users');
+                displayUsers(data.users);
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function displayUsers(users) {
+            const tbody = document.getElementById('users-body');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user._id}</td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone || '-'}</td>
+                    <td>${user.role}</td>
+                    <td>
+                        <span class="status-badge ${user.isActive ? 'status-delivered' : 'status-cancelled'}">
+                            ${user.isActive ? 'Hoạt động' : 'Bị khóa'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-warning" onclick="toggleUserStatus('${user._id}', ${!user.isActive})">
+                            <i class="fas fa-${user.isActive ? 'lock' : 'unlock'}"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load reviews
+        async function loadReviews() {
+            try {
+                const data = await apiCall('/reviews');
+                displayReviews(data.reviews);
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+            }
+        }
+
+        function displayReviews(reviews) {
+            const tbody = document.getElementById('reviews-body');
+            tbody.innerHTML = '';
+
+            reviews.forEach(review => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${review._id}</td>
+                    <td>${review.product.name}</td>
+                    <td>${review.user.name}</td>
+                    <td>${'★'.repeat(review.rating)}${'☆'.repeat(5-review.rating)}</td>
+                    <td>${review.comment.substring(0, 50)}...</td>
+                    <td>
+                        <span class="status-badge ${review.status === 'approved' ? 'status-delivered' : 'status-pending'}">
+                            ${review.status === 'approved' ? 'Đã duyệt' : 'Chờ duyệt'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-${review.status === 'approved' ? 'warning' : 'success'}" 
+                                onclick="toggleReviewStatus('${review._id}', '${review.status === 'approved' ? 'pending' : 'approved'}')">
+                            <i class="fas fa-${review.status === 'approved' ? 'times' : 'check'}"></i>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load inventory
+        async function loadInventory() {
+            try {
+                const data = await apiCall('/admin/inventory');
+                displayInventory(data.inventory);
+            } catch (error) {
+                console.error('Error loading inventory:', error);
+            }
+        }
+
+        function displayInventory(inventory) {
+            const tbody = document.getElementById('inventory-body');
+            tbody.innerHTML = '';
+
+            inventory.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.product._id}</td>
+                    <td>${item.product.name}</td>
+                    <td>
+                        <input type="number" id="stock-${item.product._id}" value="${item.stock}" min="0" style="width: 80px;">
+                    </td>
+                    <td>${item.sold}</td>
+                    <td>${formatCurrency(item.costPrice)}</td>
+                    <td>${formatCurrency(item.sellingPrice)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="updateStock('${item.product._id}')">
+                            <i class="fas fa-save"></i> Lưu
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Load reports
+        async function loadReports() {
+            try {
+                // Load overview
+                const overviewData = await apiCall('/admin/reports/overview');
+                document.getElementById('report-revenue').textContent = formatCurrency(overviewData.overview.monthlyRevenue);
+                document.getElementById('report-orders').textContent = overviewData.overview.monthlyOrders;
+                document.getElementById('report-top-product').textContent = overviewData.overview.topProduct?.name || '-';
+                document.getElementById('report-new-users').textContent = overviewData.overview.newUsers;
+
+                // Load top products
+                const topProductsData = await apiCall('/admin/reports/top-products');
+                displayTopProducts(topProductsData.products);
+
+                // Load category revenue
+                const categoryData = await apiCall('/admin/reports/category-revenue');
+                displayCategoryRevenue(categoryData.categories);
+
+                // Load and render chart
+                updateChart();
+
+            } catch (error) {
+                console.error('Error loading reports:', error);
+            }
+        }
+
+        function displayTopProducts(products) {
+            const tbody = document.getElementById('top-products-body');
+            tbody.innerHTML = '';
+
+            products.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.product.name}</td>
+                    <td>${item.quantity}</td>
+                    <td>${formatCurrency(item.revenue)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function displayCategoryRevenue(categories) {
+            const tbody = document.getElementById('category-revenue-body');
+            tbody.innerHTML = '';
+
+            categories.forEach(item => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.category}</td>
+                    <td>${item.quantity}</td>
+                    <td>${formatCurrency(item.revenue)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update revenue chart
+        async function updateChart() {
+            try {
+                const period = document.getElementById('chart-period').value;
+                const type = document.getElementById('chart-type').value;
+                
+                const data = await apiCall(`/admin/reports/revenue?period=${period}&type=${type}`);
+                renderRevenueChart(data.revenue);
+            } catch (error) {
+                console.error('Error updating chart:', error);
+            }
+        }
+
+        function renderRevenueChart(revenueData) {
+            const ctx = document.getElementById('revenue-chart').getContext('2d');
+            
+            // Destroy existing chart if any
+            if (window.revenueChart) {
+                window.revenueChart.destroy();
+            }
+            
+            const labels = revenueData.map(item => item.label);
+            const data = revenueData.map(item => item.revenue);
+            
+            window.revenueChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu',
+                        data: data,
+                        backgroundColor: 'rgba(52, 152, 219, 0.8)',
+                        borderColor: 'rgba(52, 152, 219, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Biểu đồ doanh thu',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Action functions
+        async function updateOrderStatus(orderId, status) {
+            try {
+                await apiCall(`/orders/${orderId}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status })
+                });
+                showNotification('Cập nhật trạng thái đơn hàng thành công!', 'success');
+                loadAllOrders();
+            } catch (error) {
+                console.error('Error updating order status:', error);
+            }
+        }
+
+        async function updateStock(productId) {
+            const newStock = document.getElementById(`stock-${productId}`).value;
+            
+            try {
+                await apiCall(`/admin/inventory/${productId}/stock`, {
+                    method: 'PUT',
+                    body: JSON.stringify({
+                        stock: parseInt(newStock),
+                        operation: 'set'
+                    })
+                });
+                showNotification('Cập nhật tồn kho thành công!', 'success');
+                loadInventory();
+            } catch (error) {
+                console.error('Error updating stock:', error);
+            }
+        }
+
+        async function showLowStockProducts() {
+            try {
+                const data = await apiCall('/admin/inventory/low-stock');
+                displayInventory(data.products);
+                showNotification('Đã hiển thị sản phẩm sắp hết hàng', 'info');
+            } catch (error) {
+                console.error('Error loading low stock products:', error);
+            }
+        }
+
+        async function toggleProductStatus(productId, newStatus) {
+            try {
+                await apiCall(`/products/${productId}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ isActive: newStatus })
+                });
+                showNotification('Cập nhật trạng thái sản phẩm thành công!', 'success');
+                loadProducts();
+            } catch (error) {
+                console.error('Error updating product status:', error);
+            }
+        }
+
+        async function toggleUserStatus(userId, newStatus) {
+            try {
+                await apiCall(`/admin/users/${userId}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ isActive: newStatus })
+                });
+                showNotification('Cập nhật trạng thái người dùng thành công!', 'success');
+                loadUsers();
+            } catch (error) {
+                console.error('Error updating user status:', error);
+            }
+        }
+
+        async function toggleReviewStatus(reviewId, newStatus) {
+            try {
+                await apiCall(`/reviews/${reviewId}/status`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: newStatus })
+                });
+                showNotification('Cập nhật trạng thái đánh giá thành công!', 'success');
+                loadReviews();
+            } catch (error) {
+                console.error('Error updating review status:', error);
+            }
+        }
+
+        function viewOrder(orderId) {
+            // Redirect to order detail page or show modal
+            window.open(`/orders.html?id=${orderId}`, '_blank');
+        }
+
+        function logout() {
+            if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem('adminToken');
+            }
+            window.location.href = '/login.html';
+        }
+
+        // Initialize
+        loadDashboard();
+    </script>
+</body>
+</html>

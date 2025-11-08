@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điện Máy Xanh - Mua sắm điện tử trực tuyến</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1>Điện Máy Xanh</h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Tìm kiếm sản phẩm..." id="searchInput">
+                    <button onclick="searchProducts()"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="header-actions">
+                    <div class="cart-icon" onclick="toggleCart()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </div>
+                    <button class="login-btn" onclick="showLogin()">Đăng nhập</button>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <ul>
+                    <li><a href="#home">Trang chủ</a></li>
+                    <li><a href="#products">Sản phẩm</a></li>
+                    <li><a href="#promotions">Khuyến mãi</a></li>
+                    <li><a href="#services">Dịch vụ</a></li>
+                    <li><a href="#contact">Liên hệ</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-slider">
+            <div class="hero-slide active">
+                <img src="https://via.placeholder.com/1200x400/4CAF50/ffffff?text=Khuyến+mãi+lớn+TV+Samsung" alt="Khuyến mãi TV">
+                <div class="hero-content">
+                    <h2>Giảm giá lên đến 50%</h2>
+                    <p>Cho các dòng TV Samsung mới nhất</p>
+                    <button class="cta-button">Mua ngay</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section class="categories">
+        <div class="container">
+            <h2>Danh mục sản phẩm</h2>
+            <div class="category-grid">
+                <div class="category-item" onclick="filterByCategory('tivi')">
+                    <i class="fas fa-tv"></i>
+                    <span>TV</span>
+                </div>
+                <div class="category-item" onclick="filterByCategory('tulanh')">
+                    <i class="fas fa-snowflake"></i>
+                    <span>Tủ lạnh</span>
+                </div>
+                <div class="category-item" onclick="filterByCategory('maygiat')">
+                    <i class="fas fa-tshirt"></i>
+                    <span>Máy giặt</span>
+                </div>
+                <div class="category-item" onclick="filterByCategory('dieuhoa')">
+                    <i class="fas fa-wind"></i>
+                    <span>Điều hòa</span>
+                </div>
+                <div class="category-item" onclick="filterByCategory('maylanh')">
+                    <i class="fas fa-fan"></i>
+                    <span>Máy lạnh</span>
+                </div>
+                <div class="category-item" onclick="filterByCategory('gianoi')">
+                    <i class="fas fa-fire"></i>
+                    <span>Bình nóng lạnh</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Products -->
+    <section class="products" id="products">
+        <div class="container">
+            <h2>Sản phẩm nổi bật</h2>
+            <div class="product-grid" id="productGrid">
+                <!-- Products will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Promotions -->
+    <section class="promotions" id="promotions">
+        <div class="container">
+            <h2>Khuyến mãi hot</h2>
+            <div class="promotion-grid">
+                <div class="promotion-item">
+                    <img src="https://via.placeholder.com/300x200/FF5722/ffffff?text=Giảm+20%" alt="Khuyến mãi">
+                    <div class="promotion-content">
+                        <h3>Giảm 20% tất cả TV</h3>
+                        <p>Áp dụng cho đơn hàng trên 5 triệu</p>
+                        <button class="promo-btn">Xem chi tiết</button>
+                    </div>
+                </div>
+                <div class="promotion-item">
+                    <img src="https://via.placeholder.com/300x200/2196F3/ffffff?text=Mua+1+tặng+1" alt="Khuyến mãi">
+                    <div class="promotion-content">
+                        <h3>Mua 1 tặng 1</h3>
+                        <p>Tặng bình nóng lạnh khi mua máy giặt</p>
+                        <button class="promo-btn">Xem chi tiết</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Shopping Cart Modal -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h3>Giỏ hàng của bạn</h3>
+                <button class="close-btn" onclick="toggleCart()">&times;</button>
+            </div>
+            <div class="cart-items" id="cartItems">
+                <!-- Cart items will be displayed here -->
+            </div>
+            <div class="cart-footer">
+                <div class="cart-total">
+                    <strong>Tổng tiền: <span id="cartTotal">0₫</span></strong>
+                </div>
+                <button class="checkout-btn" onclick="checkout()">Thanh toán</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal" id="loginModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Đăng nhập</h3>
+                <button class="close-btn" onclick="closeLogin()">&times;</button>
+            </div>
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <input type="email" placeholder="Email" required>
+                <input type="password" placeholder="Mật khẩu" required>
+                <button type="submit">Đăng nhập</button>
+            </form>
+            <p>Chưa có tài khoản? <a href="#" onclick="showRegister()">Đăng ký</a></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Về chúng tôi</h4>
+                    <p>Điện Máy Xanh - Chuyên cung cấp các sản phẩm điện tử chất lượng cao</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Liên hệ</h4>
+                    <p>Hotline: 1900.xxxx</p>
+                    <p>Email: info@dienmayxanh.com</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Dịch vụ</h4>
+                    <ul>
+                        <li>Giao hàng tận nơi</li>
+                        <li>Bảo hành chính hãng</li>
+                        <li>Đổi trả trong 7 ngày</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

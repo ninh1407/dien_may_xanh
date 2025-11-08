@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Điện Máy Xanh - Mua sắm điện tử, điện lạnh, gia dụng</title>
+    <meta name="description" content="Điện Máy Xanh - Hệ thống siêu thị điện máy hàng đầu Việt Nam. Mua sắm điện thoại, laptop, điện gia dụng với giá tốt nhất.">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1>Điện Máy Xanh</h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+                    <button class="search-btn" onclick="searchProducts()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="header-actions">
+                    <div class="user-menu" id="userMenu">
+                        <a href="login.html" class="login-btn">
+                            <i class="fas fa-user"></i>
+                            <span>Đăng nhập</span>
+                        </a>
+                    </div>
+                    <a href="cart.html" class="cart-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li><a href="home.html" class="active">Trang chủ</a></li>
+                    <li><a href="products.html?category=dien-thoai">Điện thoại</a></li>
+                    <li><a href="products.html?category=laptop">Laptop</a></li>
+                    <li><a href="products.html?category=may-tinh-bang">Máy tính bảng</a></li>
+                    <li><a href="products.html?category=phu-kien">Phụ kiện</a></li>
+                    <li><a href="orders.html">Đơn hàng</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-slider">
+                    <div class="hero-slide active">
+                        <div class="hero-content">
+                            <h2>iPhone 15 Pro Max</h2>
+                            <p>Trải nghiệm công nghệ vượt trội với chip A17 Pro</p>
+                            <div class="hero-price">
+                                <span class="current-price">34.990.000₫</span>
+                                <span class="original-price">36.990.000₫</span>
+                            </div>
+                            <button class="btn btn-primary" onclick="viewProduct('iphone-15-pro-max')">Mua ngay</button>
+                        </div>
+                        <div class="hero-image">
+                            <img src="https://via.placeholder.com/500x400/4A90E2/FFFFFF?text=iPhone+15+Pro+Max" alt="iPhone 15 Pro Max">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Categories -->
+        <section class="featured-categories">
+            <div class="container">
+                <h2 class="section-title">Danh mục nổi bật</h2>
+                <div class="categories-grid" id="featuredCategories">
+                    <!-- Categories will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Products -->
+        <section class="featured-products">
+            <div class="container">
+                <h2 class="section-title">Sản phẩm nổi bật</h2>
+                <div class="products-grid" id="featuredProducts">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Hot Deals -->
+        <section class="hot-deals">
+            <div class="container">
+                <h2 class="section-title">Khuyến mãi hot</h2>
+                <div class="deals-grid" id="hotDeals">
+                    <!-- Deals will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Về chúng tôi</h3>
+                    <ul>
+                        <li><a href="#">Giới thiệu</a></li>
+                        <li><a href="#">Tuyển dụng</a></li>
+                        <li><a href="#">Tin tức</a></li>
+                        <li><a href="#">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Hỗ trợ khách hàng</h3>
+                    <ul>
+                        <li><a href="#">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Chính sách bảo hành</a></li>
+                        <li><a href="#">Giao hàng & thanh toán</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Thông tin liên hệ</h3>
+                    <p><i class="fas fa-phone"></i> Hotline: 1900.1900</p>
+                    <p><i class="fas fa-envelope"></i> Email: support@dienmayxanh.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Nguyễn Trãi, Q.1, TP.HCM</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Kết nối với chúng tôi</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Điện Máy Xanh. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+    <script>
+        // Load featured categories and products when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeaturedCategories();
+            loadFeaturedProducts();
+            loadHotDeals();
+            updateCartCount();
+            checkUserLogin();
+        });
+
+        // Load featured categories
+        async function loadFeaturedCategories() {
+            try {
+                const response = await fetch('/api/categories/featured');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const categoriesGrid = document.getElementById('featuredCategories');
+                    categoriesGrid.innerHTML = data.data.map(category => `
+                        <div class="category-card">
+                            <div class="category-icon">
+                                <i class="fas fa-${category.icon}"></i>
+                            </div>
+                            <h3>${category.name}</h3>
+                            <p>${category.description}</p>
+                            <a href="products.html?category=${category.slug}" class="btn btn-outline">Xem thêm</a>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading categories:', error);
+            }
+        }
+
+        // Load featured products
+        async function loadFeaturedProducts() {
+            try {
+                const response = await fetch('/api/products?isFeatured=true&limit=8');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const productsGrid = document.getElementById('featuredProducts');
+                    productsGrid.innerHTML = data.data.map(product => `
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="${product.images[0] || 'https://via.placeholder.com/300x300'}" alt="${product.name}">
+                                <div class="product-badge">Hot</div>
+                            </div>
+                            <div class="product-info">
+                                <h3 class="product-name">${product.name}</h3>
+                                <p class="product-description">${product.description}</p>
+                                <div class="product-price">
+                                    <span class="current-price">${formatPrice(product.price)}</span>
+                                    ${product.originalPrice ? `<span class="original-price">${formatPrice(product.originalPrice)}</span>` : ''}
+                                </div>
+                                <div class="product-actions">
+                                    <button class="btn btn-primary" onclick="addToCart('${product._id}')">Thêm giỏ hàng</button>
+                                    <button class="btn btn-outline" onclick="viewProduct('${product.slug}')">Xem chi tiết</button>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+            }
+        }
+
+        // Load hot deals
+        async function loadHotDeals() {
+            try {
+                const response = await fetch('/api/products?isFeatured=true&limit=4');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const dealsGrid = document.getElementById('hotDeals');
+                    dealsGrid.innerHTML = data.data.slice(0, 4).map(product => `
+                        <div class="deal-card">
+                            <div class="deal-image">
+                                <img src="${product.images[0] || 'https://via.placeholder.com/250x250'}" alt="${product.name}">
+                                <div class="deal-discount">-${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%</div>
+                            </div>
+                            <div class="deal-info">
+                                <h3>${product.name}</h3>
+                                <div class="deal-price">
+                                    <span class="deal-current">${formatPrice(product.price)}</span>
+                                    <span class="deal-original">${formatPrice(product.originalPrice)}</span>
+                                </div>
+                                <button class="btn btn-primary btn-block" onclick="addToCart('${product._id}')">Mua ngay</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading deals:', error);
+            }
+        }
+
+        // Search products
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value;
+            if (searchTerm.trim()) {
+                window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+
+        // View product details
+        function viewProduct(slug) {
+            window.location.href = `product-detail.html?product=${slug}`;
+        }
+
+        // Add to cart
+        async function addToCart(productId) {
+            try {
+                if (typeof localStorage === 'undefined') {
+                    alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        quantity: 1
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Sản phẩm đã được thêm vào giỏ hàng');
+                    updateCartCount();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra');
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            }
+        }
+
+        // Update cart count
+        async function updateCartCount() {
+            try {
+                if (typeof localStorage === 'undefined') return;
+                
+                const token = localStorage.getItem('token');
+                if (!token) return;
+
+                const response = await fetch('/api/cart', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const cartCount = document.getElementById('cartCount');
+                    const totalItems = data.data.items.reduce((sum, item) => sum + item.quantity, 0);
+                    cartCount.textContent = totalItems;
+                    cartCount.style.display = totalItems > 0 ? 'block' : 'none';
+                }
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+
+        // Check user login status
+        function checkUserLogin() {
+            if (typeof localStorage === 'undefined') return;
+            
+            const token = localStorage.getItem('token');
+            const userMenu = document.getElementById('userMenu');
+            
+            if (token) {
+                // User is logged in, show user menu
+                userMenu.innerHTML = `
+                    <div class="user-dropdown">
+                        <button class="user-btn">
+                            <i class="fas fa-user"></i>
+                            <span>Tài khoản</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="profile.html">Thông tin cá nhân</a>
+                            <a href="orders.html">Đơn hàng của tôi</a>
+                            <a href="wishlist.html">Sản phẩm yêu thích</a>
+                            <a href="#" onclick="logout()">Đăng xuất</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+            }
+            window.location.href = 'home.html';
+        }
+
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+
+        // Search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts();
+            }
+        });
+    </script>
+</body>
+</html>

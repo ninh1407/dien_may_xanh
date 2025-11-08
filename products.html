@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sản phẩm - Điện Máy Xanh</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Products page specific styles */
+        .products-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 30px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            height: fit-content;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 100px;
+        }
+
+        .sidebar h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #1e293b;
+        }
+
+        .filter-section {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .filter-section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .filter-group {
+            margin-bottom: 16px;
+        }
+
+        .filter-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 0;
+            color: #475569;
+            transition: color 0.3s;
+        }
+
+        .filter-group label:hover {
+            color: #2563eb;
+        }
+
+        .filter-group input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: #2563eb;
+        }
+
+        .price-range {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .price-range input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .price-range input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .filter-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn-filter {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-apply {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-apply:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-reset {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-reset:hover {
+            background: #e2e8f0;
+        }
+
+        .products-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .products-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .products-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .products-controls {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .sort-select {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .sort-select:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+        }
+
+        .view-btn {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .view-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .products-grid.list-view {
+            grid-template-columns: 1fr;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .products-grid.list-view .product-card {
+            display: flex;
+            align-items: center;
+        }
+
+        .product-image {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .products-grid.list-view .product-image {
+            width: 200px;
+            height: 150px;
+            flex-shrink: 0;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .product-card:hover .product-image img {
+            transform: scale(1.05);
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .product-badge.discount {
+            background: #f59e0b;
+        }
+
+        .product-badge.new {
+            background: #10b981;
+        }
+
+        .product-info {
+            padding: 16px;
+        }
+
+        .products-grid.list-view .product-info {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1e293b;
+            line-height: 1.4;
+            height: 2.8em;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+        .products-grid.list-view .product-name {
+            height: auto;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+        }
+
+        .product-price {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .current-price {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        .original-price {
+            font-size: 14px;
+            color: #94a3b8;
+            text-decoration: line-through;
+        }
+
+        .discount-percent {
+            background: #fef3c7;
+            color: #f59e0b;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+
+        .stars {
+            color: #fbbf24;
+            font-size: 14px;
+        }
+
+        .rating-text {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-add-cart {
+            flex: 1;
+            padding: 8px 12px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-add-cart:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-wishlist {
+            padding: 8px 12px;
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-wishlist:hover {
+            background: #e2e8f0;
+            color: #ef4444;
+        }
+
+        .btn-wishlist.active {
+            background: #fee2e2;
+            color: #ef4444;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 32px;
+        }
+
+        .page-btn {
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .page-btn:hover {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .page-btn.active {
+            background: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f1f5f9;
+            border-top: 4px solid #2563eb;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .no-products {
+            text-align: center;
+            padding: 60px 20px;
+            color: #64748b;
+        }
+
+        .no-products i {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .no-products h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #475569;
+        }
+
+        .breadcrumb {
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #64748b;
+        }
+
+        .breadcrumb a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            margin: 0 8px;
+        }
+
+        @media (max-width: 768px) {
+            .products-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .sidebar {
+                position: static;
+                order: 2;
+            }
+            
+            .products-content {
+                order: 1;
+            }
+            
+            .products-header {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 16px;
+            }
+            
+            .products-grid.list-view .product-card {
+                flex-direction: column;
+            }
+            
+            .products-grid.list-view .product-image {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header (same as home page) -->
+    <header class="header">
+        <div class="container">
+            <div class="header-top">
+                <div class="logo">
+                    <h1>Điện Máy Xanh</h1>
+                </div>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+                    <button class="search-btn" onclick="searchProducts()">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <div class="header-actions">
+                    <div class="user-menu" id="userMenu">
+                        <a href="login.html" class="login-btn">
+                            <i class="fas fa-user"></i>
+                            <span>Đăng nhập</span>
+                        </a>
+                    </div>
+                    <a href="cart.html" class="cart-btn">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count" id="cartCount">0</span>
+                    </a>
+                </div>
+            </div>
+            
+            <nav class="main-nav">
+                <ul class="nav-list">
+                    <li><a href="home.html">Trang chủ</a></li>
+                    <li><a href="products.html?category=dien-thoai">Điện thoại</a></li>
+                    <li><a href="products.html?category=laptop">Laptop</a></li>
+                    <li><a href="products.html?category=may-tinh-bang">Máy tính bảng</a></li>
+                    <li><a href="products.html?category=phu-kien">Phụ kiện</a></li>
+                    <li><a href="orders.html">Đơn hàng</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="products-container">
+            <!-- Sidebar Filters -->
+            <aside class="sidebar">
+                <h3><i class="fas fa-filter"></i> Bộ lọc</h3>
+                
+                <!-- Categories -->
+                <div class="filter-section">
+                    <h4>Danh mục</h4>
+                    <div id="categoryFilters">
+                        <!-- Categories will be loaded dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Price Range -->
+                <div class="filter-section">
+                    <h4>Khoảng giá</h4>
+                    <div class="price-range">
+                        <input type="number" id="minPrice" placeholder="Từ" min="0">
+                        <span>-</span>
+                        <input type="number" id="maxPrice" placeholder="Đến" min="0">
+                    </div>
+                </div>
+                
+                <!-- Brands -->
+                <div class="filter-section">
+                    <h4>Thương hiệu</h4>
+                    <div id="brandFilters">
+                        <!-- Brands will be loaded dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Rating -->
+                <div class="filter-section">
+                    <h4>Đánh giá</h4>
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" name="rating" value="4">
+                            <span>⭐⭐⭐⭐ trở lên</span>
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" name="rating" value="3">
+                            <span>⭐⭐⭐ trở lên</span>
+                        </label>
+                    </div>
+                    <div class="filter-group">
+                        <label>
+                            <input type="checkbox" name="rating" value="2">
+                            <span>⭐⭐ trở lên</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Filter Actions -->
+                <div class="filter-actions">
+                    <button class="btn-filter btn-apply" onclick="applyFilters()">
+                        <i class="fas fa-check"></i> Áp dụng
+                    </button>
+                    <button class="btn-filter btn-reset" onclick="resetFilters()">
+                        <i class="fas fa-undo"></i> Đặt lại
+                    </button>
+                </div>
+            </aside>
+            
+            <!-- Products Content -->
+            <div class="products-content">
+                <!-- Breadcrumb -->
+                <div class="breadcrumb" id="breadcrumb">
+                    <a href="home.html">Trang chủ</a>
+                    <span>/</span>
+                    <span id="currentCategory">Tất cả sản phẩm</span>
+                </div>
+                
+                <!-- Products Header -->
+                <div class="products-header">
+                    <h1 class="products-title" id="productsTitle">Tất cả sản phẩm</h1>
+                    <div class="products-controls">
+                        <select class="sort-select" id="sortSelect" onchange="sortProducts()">
+                            <option value="newest">Mới nhất</option>
+                            <option value="price-asc">Giá thấp đến cao</option>
+                            <option value="price-desc">Giá cao đến thấp</option>
+                            <option value="name">Tên A-Z</option>
+                            <option value="rating">Đánh giá cao nhất</option>
+                            <option value="popular">Phổ biến nhất</option>
+                        </select>
+                        
+                        <div class="view-toggle">
+                            <button class="view-btn active" onclick="setView('grid')" title="Dạng lưới">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-btn" onclick="setView('list')" title="Dạng danh sách">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Products Grid -->
+                <div class="products-grid" id="productsGrid">
+                    <!-- Products will be loaded dynamically -->
+                </div>
+                
+                <!-- Loading -->
+                <div class="loading" id="loading" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Đang tải sản phẩm...</p>
+                </div>
+                
+                <!-- No Products -->
+                <div class="no-products" id="noProducts" style="display: none;">
+                    <i class="fas fa-box-open"></i>
+                    <h3>Không tìm thấy sản phẩm</h3>
+                    <p>Vui lòng thử lại với bộ lọc khác</p>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="pagination" id="pagination">
+                    <!-- Pagination will be loaded dynamically -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Về chúng tôi</h3>
+                    <ul>
+                        <li><a href="#">Giới thiệu</a></li>
+                        <li><a href="#">Tuyển dụng</a></li>
+                        <li><a href="#">Tin tức</a></li>
+                        <li><a href="#">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Hỗ trợ khách hàng</h3>
+                    <ul>
+                        <li><a href="#">Hướng dẫn mua hàng</a></li>
+                        <li><a href="#">Chính sách đổi trả</a></li>
+                        <li><a href="#">Chính sách bảo hành</a></li>
+                        <li><a href="#">Giao hàng & thanh toán</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Thông tin liên hệ</h3>
+                    <p><i class="fas fa-phone"></i> Hotline: 1900.1900</p>
+                    <p><i class="fas fa-envelope"></i> Email: support@dienmayxanh.com</p>
+                    <p><i class="fas fa-map-marker-alt"></i> 123 Nguyễn Trãi, Q.1, TP.HCM</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Kết nối với chúng tôi</h3>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                        <a href="#"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Điện Máy Xanh. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentPage = 1;
+        let currentView = 'grid';
+        let currentFilters = {
+            category: '',
+            search: '',
+            minPrice: '',
+            maxPrice: '',
+            brands: [],
+            rating: '',
+            sort: 'newest'
+        };
+        let products = [];
+        let categories = [];
+        let brands = [];
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFilters();
+            loadProducts();
+            updateCartCount();
+            checkUserLogin();
+        });
+        
+        // Load filters (categories and brands)
+        async function loadFilters() {
+            try {
+                // Load categories
+                const categoriesResponse = await fetch('/api/categories');
+                const categoriesData = await categoriesResponse.json();
+                if (categoriesData.success) {
+                    categories = categoriesData.data;
+                    renderCategoryFilters();
+                }
+                
+                // Load brands from products
+                const productsResponse = await fetch('/api/products?limit=100');
+                const productsData = await productsResponse.json();
+                if (productsData.success) {
+                    const brandSet = new Set();
+                    productsData.data.forEach(product => {
+                        if (product.brand) {
+                            brandSet.add(product.brand);
+                        }
+                    });
+                    brands = Array.from(brandSet).sort();
+                    renderBrandFilters();
+                }
+            } catch (error) {
+                console.error('Error loading filters:', error);
+            }
+        }
+        
+        // Render category filters
+        function renderCategoryFilters() {
+            const categoryFilters = document.getElementById('categoryFilters');
+            categoryFilters.innerHTML = categories.map(category => `
+                <div class="filter-group">
+                    <label>
+                        <input type="checkbox" name="category" value="${category.slug}">
+                        <span>${category.name}</span>
+                    </label>
+                </div>
+            `).join('');
+        }
+        
+        // Render brand filters
+        function renderBrandFilters() {
+            const brandFilters = document.getElementById('brandFilters');
+            brandFilters.innerHTML = brands.map(brand => `
+                <div class="filter-group">
+                    <label>
+                        <input type="checkbox" name="brand" value="${brand}">
+                        <span>${brand}</span>
+                    </label>
+                </div>
+            `).join('');
+        }
+        
+        // Load products
+        async function loadProducts() {
+            showLoading(true);
+            
+            try {
+                // Get URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const categoryParam = urlParams.get('category');
+                const searchParam = urlParams.get('search');
+                
+                // Update current filters
+                currentFilters.category = categoryParam || '';
+                currentFilters.search = searchParam || '';
+                
+                // Update UI
+                updateBreadcrumb();
+                updateTitle();
+                
+                // Build API URL
+                let apiUrl = `/api/products?page=${currentPage}&limit=12&sort=${currentFilters.sort}`;
+                
+                if (currentFilters.category) {
+                    apiUrl += `&category=${currentFilters.category}`;
+                }
+                
+                if (currentFilters.search) {
+                    apiUrl += `&search=${encodeURIComponent(currentFilters.search)}`;
+                }
+                
+                if (currentFilters.minPrice) {
+                    apiUrl += `&minPrice=${currentFilters.minPrice}`;
+                }
+                
+                if (currentFilters.maxPrice) {
+                    apiUrl += `&maxPrice=${currentFilters.maxPrice}`;
+                }
+                
+                if (currentFilters.brands.length > 0) {
+                    apiUrl += `&brands=${currentFilters.brands.join(',')}`;
+                }
+                
+                if (currentFilters.rating) {
+                    apiUrl += `&minRating=${currentFilters.rating}`;
+                }
+                
+                // Fetch products
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+                
+                if (data.success) {
+                    products = data.data;
+                    renderProducts();
+                    renderPagination(data.pagination);
+                } else {
+                    showNoProducts();
+                }
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showNoProducts();
+            } finally {
+                showLoading(false);
+            }
+        }
+        
+        // Render products
+        function renderProducts() {
+            const productsGrid = document.getElementById('productsGrid');
+            
+            if (products.length === 0) {
+                showNoProducts();
+                return;
+            }
+            
+            productsGrid.innerHTML = products.map(product => `
+                <div class="product-card" onclick="viewProduct('${product.slug}')">
+                    <div class="product-image">
+                        <img src="${product.images[0] || 'https://via.placeholder.com/300x300'}" alt="${product.name}">
+                        ${product.discount > 0 ? `<div class="product-badge discount">-${product.discount}%</div>` : ''}
+                        ${product.isNew ? '<div class="product-badge new">Mới</div>' : ''}
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-name">${product.name}</h3>
+                        <div class="product-price">
+                            <span class="current-price">${formatPrice(product.price)}</span>
+                            ${product.originalPrice ? `<span class="original-price">${formatPrice(product.originalPrice)}</span>` : ''}
+                            ${product.discount > 0 ? `<span class="discount-percent">-${product.discount}%</span>` : ''}
+                        </div>
+                        <div class="product-rating">
+                            <div class="stars">${renderStars(product.rating || 0)}</div>
+                            <span class="rating-text">(${product.reviews?.length || 0} đánh giá)</span>
+                        </div>
+                        <div class="product-actions" onclick="event.stopPropagation()">
+                            <button class="btn-add-cart" onclick="addToCart('${product._id}')">
+                                <i class="fas fa-cart-plus"></i> Thêm giỏ hàng
+                            </button>
+                            <button class="btn-wishlist" onclick="toggleWishlist('${product._id}')" title="Yêu thích">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            // Hide no products message
+            document.getElementById('noProducts').style.display = 'none';
+        }
+        
+        // Render pagination
+        function renderPagination(pagination) {
+            const paginationContainer = document.getElementById('pagination');
+            
+            if (!pagination || pagination.totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+            
+            let html = '';
+            
+            // Previous button
+            if (pagination.currentPage > 1) {
+                html += `<button class="page-btn" onclick="changePage(${pagination.currentPage - 1})">
+                    <i class="fas fa-chevron-left"></i>
+                </button>`;
+            }
+            
+            // Page numbers
+            const maxVisiblePages = 5;
+            let startPage = Math.max(1, pagination.currentPage - Math.floor(maxVisiblePages / 2));
+            let endPage = Math.min(pagination.totalPages, startPage + maxVisiblePages - 1);
+            
+            if (endPage - startPage < maxVisiblePages - 1) {
+                startPage = Math.max(1, endPage - maxVisiblePages + 1);
+            }
+            
+            if (startPage > 1) {
+                html += `<button class="page-btn" onclick="changePage(1)">1</button>`;
+                if (startPage > 2) {
+                    html += `<span class="page-btn" style="border: none; cursor: default;">...</span>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button class="page-btn ${i === pagination.currentPage ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`;
+            }
+            
+            if (endPage < pagination.totalPages) {
+                if (endPage < pagination.totalPages - 1) {
+                    html += `<span class="page-btn" style="border: none; cursor: default;">...</span>`;
+                }
+                html += `<button class="page-btn" onclick="changePage(${pagination.totalPages})">${pagination.totalPages}</button>`;
+            }
+            
+            // Next button
+            if (pagination.currentPage < pagination.totalPages) {
+                html += `<button class="page-btn" onclick="changePage(${pagination.currentPage + 1})">
+                    <i class="fas fa-chevron-right"></i>
+                </button>`;
+            }
+            
+            paginationContainer.innerHTML = html;
+        }
+        
+        // Change page
+        function changePage(page) {
+            currentPage = page;
+            loadProducts();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Set view (grid/list)
+        function setView(view) {
+            currentView = view;
+            const productsGrid = document.getElementById('productsGrid');
+            const viewButtons = document.querySelectorAll('.view-btn');
+            
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+            event.target.closest('.view-btn').classList.add('active');
+            
+            if (view === 'list') {
+                productsGrid.classList.add('list-view');
+            } else {
+                productsGrid.classList.remove('list-view');
+            }
+        }
+        
+        // Sort products
+        function sortProducts() {
+            const sortSelect = document.getElementById('sortSelect');
+            currentFilters.sort = sortSelect.value;
+            currentPage = 1;
+            loadProducts();
+        }
+        
+        // Apply filters
+        function applyFilters() {
+            // Get selected categories
+            const selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked'))
+                .map(cb => cb.value);
+            
+            // Get selected brands
+            const selectedBrands = Array.from(document.querySelectorAll('input[name="brand"]:checked'))
+                .map(cb => cb.value);
+            
+            // Get price range
+            const minPrice = document.getElementById('minPrice').value;
+            const maxPrice = document.getElementById('maxPrice').value;
+            
+            // Get rating
+            const selectedRating = Array.from(document.querySelectorAll('input[name="rating"]:checked'))
+                .map(cb => cb.value)[0];
+            
+            // Update filters
+            currentFilters.brands = selectedBrands;
+            currentFilters.minPrice = minPrice;
+            currentFilters.maxPrice = maxPrice;
+            currentFilters.rating = selectedRating || '';
+            
+            // If category is selected from URL, don't override with checkbox filters
+            if (!currentFilters.category && selectedCategories.length > 0) {
+                currentFilters.category = selectedCategories[0];
+            }
+            
+            currentPage = 1;
+            loadProducts();
+        }
+        
+        // Reset filters
+        function resetFilters() {
+            // Reset form inputs
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            document.getElementById('minPrice').value = '';
+            document.getElementById('maxPrice').value = '';
+            
+            // Reset current filters
+            currentFilters = {
+                category: '',
+                search: '',
+                minPrice: '',
+                maxPrice: '',
+                brands: [],
+                rating: '',
+                sort: 'newest'
+            };
+            
+            // Reset URL
+            const url = new URL(window.location);
+            url.searchParams.delete('category');
+            url.searchParams.delete('search');
+            window.history.pushState({}, '', url);
+            
+            currentPage = 1;
+            loadProducts();
+        }
+        
+        // Update breadcrumb
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get('category');
+            const searchParam = urlParams.get('search');
+            
+            let breadcrumbHTML = '<a href="home.html">Trang chủ</a> <span>/</span> ';
+            
+            if (categoryParam) {
+                const category = categories.find(c => c.slug === categoryParam);
+                breadcrumbHTML += `<span>${category ? category.name : 'Danh mục'}</span>`;
+            } else if (searchParam) {
+                breadcrumbHTML += `<span>Tìm kiếm: "${searchParam}"</span>`;
+            } else {
+                breadcrumbHTML += '<span>Tất cả sản phẩm</span>';
+            }
+            
+            breadcrumb.innerHTML = breadcrumbHTML;
+        }
+        
+        // Update title
+        function updateTitle() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const categoryParam = urlParams.get('category');
+            const searchParam = urlParams.get('search');
+            const productsTitle = document.getElementById('productsTitle');
+            const currentCategory = document.getElementById('currentCategory');
+            
+            if (categoryParam) {
+                const category = categories.find(c => c.slug === categoryParam);
+                const title = category ? category.name : 'Danh mục';
+                productsTitle.textContent = title;
+                currentCategory.textContent = title;
+            } else if (searchParam) {
+                productsTitle.textContent = `Tìm kiếm: "${searchParam}"`;
+                currentCategory.textContent = `Tìm kiếm: "${searchParam}"`;
+            } else {
+                productsTitle.textContent = 'Tất cả sản phẩm';
+                currentCategory.textContent = 'Tất cả sản phẩm';
+            }
+        }
+        
+        // Show loading
+        function showLoading(show) {
+            const loading = document.getElementById('loading');
+            const productsGrid = document.getElementById('productsGrid');
+            
+            if (show) {
+                loading.style.display = 'block';
+                productsGrid.style.display = 'none';
+            } else {
+                loading.style.display = 'none';
+                productsGrid.style.display = 'grid';
+            }
+        }
+        
+        // Show no products
+        function showNoProducts() {
+            document.getElementById('productsGrid').innerHTML = '';
+            document.getElementById('noProducts').style.display = 'block';
+            document.getElementById('pagination').innerHTML = '';
+        }
+        
+        // Search products
+        function searchProducts() {
+            const searchTerm = document.getElementById('searchInput').value;
+            if (searchTerm.trim()) {
+                window.location.href = `products.html?search=${encodeURIComponent(searchTerm)}`;
+            }
+        }
+        
+        // View product details
+        function viewProduct(slug) {
+            window.location.href = `product-detail.html?product=${slug}`;
+        }
+        
+        // Add to cart
+        async function addToCart(productId) {
+            try {
+                const token = (typeof localStorage !== 'undefined') ? localStorage.getItem('token') : null;
+                if (!token) {
+                    alert('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await fetch('/api/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        quantity: 1
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('Sản phẩm đã được thêm vào giỏ hàng');
+                    updateCartCount();
+                } else {
+                    alert(data.message || 'Có lỗi xảy ra');
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+                alert('Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng');
+            }
+        }
+        
+        // Toggle wishlist
+        async function toggleWishlist(productId) {
+            try {
+                const token = (typeof localStorage !== 'undefined') ? localStorage.getItem('token') : null;
+                if (!token) {
+                    alert('Vui lòng đăng nhập để thêm sản phẩm vào yêu thích');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                const response = await fetch('/api/wishlist/toggle', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        productId: productId
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    // Update button state
+                    const button = event.target.closest('.btn-wishlist');
+                    if (data.isInWishlist) {
+                        button.classList.add('active');
+                        button.innerHTML = '<i class="fas fa-heart"></i>';
+                    } else {
+                        button.classList.remove('active');
+                        button.innerHTML = '<i class="far fa-heart"></i>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling wishlist:', error);
+            }
+        }
+        
+        // Render stars
+        function renderStars(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) {
+                stars += '⭐';
+            }
+            
+            if (hasHalfStar) {
+                stars += '⭐';
+            }
+            
+            const emptyStars = 5 - Math.ceil(rating);
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '☆';
+            }
+            
+            return stars;
+        }
+        
+        // Format price
+        function formatPrice(price) {
+            return new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(price);
+        }
+        
+        // Update cart count
+        async function updateCartCount() {
+            try {
+                const token = (typeof localStorage !== 'undefined') ? localStorage.getItem('token') : null;
+                if (!token) return;
+
+                const response = await fetch('/api/cart', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    const cartCount = document.getElementById('cartCount');
+                    const totalItems = data.data.items.reduce((sum, item) => sum + item.quantity, 0);
+                    cartCount.textContent = totalItems;
+                    cartCount.style.display = totalItems > 0 ? 'block' : 'none';
+                }
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+        
+        // Check user login
+        function checkUserLogin() {
+            const token = (typeof localStorage !== 'undefined') ? localStorage.getItem('token') : null;
+            const userMenu = document.getElementById('userMenu');
+            
+            if (token) {
+                userMenu.innerHTML = `
+                    <div class="user-dropdown">
+                        <button class="user-btn">
+                            <i class="fas fa-user"></i>
+                            <span>Tài khoản</span>
+                        </button>
+                        <div class="dropdown-menu">
+                            <a href="profile.html">Thông tin cá nhân</a>
+                            <a href="orders.html">Đơn hàng của tôi</a>
+                            <a href="wishlist.html">Sản phẩm yêu thích</a>
+                            <a href="#" onclick="logout()">Đăng xuất</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Logout
+        function logout() {
+            if (typeof localStorage !== 'undefined') {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+            }
+            window.location.href = 'home.html';
+        }
+        
+        // Search on Enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts();
+            }
+        });
+    </script>
+</body>
+</html>
