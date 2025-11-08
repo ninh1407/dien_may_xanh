@@ -52,17 +52,21 @@ app.use('/api/', limiter);
 // Trust proxy (needed when behind Nginx/Load Balancer)
 app.set('trust proxy', 1);
 
-// CORS configuration with multi-origin support
+// CORS configuration - Production Ubuntu Server
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000')
   .split(',')
   .map(o => o.trim());
 
+console.log('Allowed Origins:', allowedOrigins); // Debug log
+
+// Production mode: chỉ cho phép origins cụ thể
 app.use(cors({
   origin: (origin, callback) => {
-    // Allow non-browser requests (no origin) and allowed origins
+    console.log('Request from origin:', origin); // Debug log
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
+      console.log('CORS rejected for origin:', origin); // Debug log
       callback(new Error('Not allowed by CORS'));
     }
   },
