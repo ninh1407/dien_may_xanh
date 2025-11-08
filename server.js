@@ -53,20 +53,34 @@ app.use('/api/', limiter);
 app.set('trust proxy', 1);
 
 // CORS configuration - Production Ubuntu Server
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000,http://localhost:5000,http://127.0.0.1:5000,http://ubuntu:5000,http://20.205.30.184:5000')
+// Normalize list: trim, remove quotes/backticks, drop trailing slashes
+const allowedOriginsRaw = (
+  process.env.ALLOWED_ORIGINS ||
+  process.env.FRONTEND_URL ||
+  'http://localhost:3000,http://localhost:5000,http://127.0.0.1:5000,http://ubuntu:5000,http://20.205.30.184,http://20.205.30.184:5000'
+);
+
+const allowedOrigins = allowedOriginsRaw
   .split(',')
-  .map(o => o.trim());
+  .map(o => o
+    .trim()
+    .replace(/^['"`]+|['"`]+$/g, '')
+    .replace(/\/$/, '')
+  );
 
 console.log('Allowed Origins:', allowedOrigins); // Debug log
 
 // Production mode: chỉ cho phép origins cụ thể
 app.use(cors({
   origin: (origin, callback) => {
-    console.log('Request from origin:', origin); // Debug log
-    if (!origin || allowedOrigins.includes(origin)) {
+    const originNormalized = origin
+      ? origin.trim().replace(/\/$/, '')
+      : undefined;
+    console.log('Request from origin:', originNormalized); // Debug log
+    if (!originNormalized || allowedOrigins.includes(originNormalized)) {
       callback(null, true);
     } else {
-      console.log('CORS rejected for origin:', origin); // Debug log
+      console.log('CORS rejected for origin:', originNormalized); // Debug log
       callback(new Error('Not allowed by CORS'));
     }
   },
