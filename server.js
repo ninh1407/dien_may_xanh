@@ -53,7 +53,7 @@ app.use('/api/', limiter);
 app.set('trust proxy', 1);
 
 // CORS configuration - Production Ubuntu Server
-const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000')
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || process.env.FRONTEND_URL || 'http://localhost:3000,http://localhost:5000,http://127.0.0.1:5000,http://ubuntu:5000,http://20.205.30.184:5000')
   .split(',')
   .map(o => o.trim());
 
@@ -90,6 +90,38 @@ app.use(morgan('combined'));
 
 // Static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve static HTML files
+app.use(express.static(__dirname));
+
+// Route cho trang chủ và các trang HTML
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/index.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+app.get('/register.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'register.html'));
+});
+
+app.get('/login.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/products.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'products.html'));
+});
+
+app.get('/cart.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'cart.html'));
+});
+
+app.get('/debug.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'debug.html'));
+});
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
