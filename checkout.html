@@ -1393,7 +1393,7 @@
 
                 if (token) {
                     // Load from API for logged in users
-                    response = await fetch('http://localhost:3000/api/cart', {
+                response = await fetch('/api/cart', {
                         headers: {
                             'Authorization': `Bearer ${token}`
                         }
@@ -1475,7 +1475,7 @@
                 const token = localStorage.getItem('token');
                 if (!token) return;
 
-                const response = await fetch('http://localhost:3000/api/addresses', {
+                const response = await fetch('/api/addresses', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1684,7 +1684,7 @@
                     detail
                 };
 
-                const response = await fetch('http://localhost:3000/api/addresses', {
+                const response = await fetch('/api/addresses', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1740,7 +1740,7 @@
 
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch(`http://localhost:3000/api/promotions/validate/${promoCode}`, {
+                const response = await fetch(`/api/promotions/validate/${promoCode}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1862,7 +1862,7 @@
                 }
 
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/orders', {
+                const response = await fetch('/api/orders', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1940,7 +1940,7 @@
             
             if (token) {
                 // Get user info
-                fetch('http://localhost:3000/api/auth/profile', {
+            fetch('/api/auth/profile', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }

@@ -59,7 +59,7 @@ app.set('trust proxy', 1);
 const allowedOriginsRaw = (
   process.env.ALLOWED_ORIGINS ||
   process.env.FRONTEND_URL ||
-  'http://localhost:3000,http://localhost:5000,http://127.0.0.1:5000,http://ubuntu:5000,http://20.205.30.184,http://20.205.30.184:5000'
+  'http://localhost:3000,http://localhost:5000,http://127.0.0.1:5000,http://ubuntu:5000,http://20.205.30.184,http://20.205.30.184:5000,https://20.205.30.184'
 );
 
 const allowedOrigins = allowedOriginsRaw

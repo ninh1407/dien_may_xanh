@@ -980,7 +980,7 @@
             }
 
             // Get user info
-            fetch('http://localhost:3000/api/auth/profile', {
+            fetch('/api/auth/profile', {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -1026,7 +1026,7 @@
                 const token = localStorage.getItem('token');
                 if (!token) return;
 
-                const response = await fetch('http://localhost:3000/api/auth/profile', {
+                const response = await fetch('/api/auth/profile', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1079,7 +1079,7 @@
         async function loadUserStats() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/users/stats', {
+                const response = await fetch('/api/users/stats', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1099,7 +1099,7 @@
         async function loadAddresses() {
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/users/addresses', {
+                const response = await fetch('/api/users/addresses', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1226,7 +1226,7 @@
                 document.getElementById('ordersLoading').style.display = 'block';
                 
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/orders/my-orders?limit=5', {
+                const response = await fetch('/api/orders/my-orders?limit=5', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1313,7 +1313,7 @@
                     address: document.getElementById('address').value
                 };
 
-                const response = await fetch('http://localhost:3000/api/auth/profile', {
+                const response = await fetch('/api/auth/profile', {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1357,7 +1357,7 @@
             
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/auth/change-password', {
+                const response = await fetch('/api/auth/change-password', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1397,7 +1397,7 @@
             
             try {
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:3000/api/auth/upload-avatar', {
+                const response = await fetch('/api/auth/upload-avatar', {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -1444,7 +1444,7 @@
                     isDefault: document.getElementById('isDefaultAddress').checked
                 };
 
-                const response = await fetch('http://localhost:3000/api/users/addresses', {
+                const response = await fetch('/api/users/addresses', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
