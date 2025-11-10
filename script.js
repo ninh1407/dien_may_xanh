@@ -1,17 +1,19 @@
 // Wait for DOM to load
 document.addEventListener('DOMContentLoaded', function() {
-    // Only initialize main page functionality if we're on the main page
-    if (document.getElementById('products')) {
-        loadProducts();
+    // Khởi tạo trang chủ
+    if (document.getElementById('productGrid')) { // Changed condition
+        loadHomepageData(); // New function to load dynamic data
         setupEventListeners();
+        initHeroSlider();
     }
     
-    // Always initialize cart functionality
+    // Luôn khởi tạo giỏ hàng
     updateCartCount();
     setupGlobalEventListeners();
 });
 
-// Product data
+// Product data - This will be removed and fetched from API
+/*
 const products = [
     {
         id: 1,
@@ -86,6 +88,8 @@ const products = [
         features: ["600L", "Side by Side", "Twin Cooling Plus", "Cảm ứng"]
     }
 ];
+*/
+let products = []; // Will be populated from API
 
 let cart = [];
 
@@ -115,12 +119,82 @@ function saveCartToStorage(cartData) {
 // Initialize cart
 cart = getCartFromStorage();
 
-// Load products
+// Load products - REPLACED with loadHomepageData
+async function loadHomepageData() {
+    await Promise.all([
+        loadCategories(),
+        loadFeaturedProducts()
+    ]);
+}
+
+// NEW: Load categories for mega menu
+async function loadCategories() {
+    try {
+        const response = await fetch('/api/categories?hierarchy=true&parent=null');
+        if (!response.ok) throw new Error('Failed to fetch categories');
+        
+        const result = await response.json();
+        if (result.success) {
+            const menu = document.getElementById('megaMenuDynamic');
+            if (menu) {
+                renderCategories(result.data, menu);
+            }
+        }
+    } catch (error) {
+        console.error("Error loading categories:", error);
+    }
+}
+
+// NEW: Render categories into the menu
+function renderCategories(categories, parentElement) {
+    parentElement.innerHTML = categories.map(category => `
+        <li>
+            <a href="/products.html?category=${category.slug}">
+                <i class="${category.icon || 'fas fa-tag'}"></i>
+                ${category.name}
+                ${category.children && category.children.length > 0 ? '<i class="fas fa-chevron-down"></i>' : ''}
+            </a>
+            ${category.children && category.children.length > 0 ? `
+                <div class="submenu">
+                    <ul>
+                        ${category.children.map(child => `
+                            <li><a href="/products.html?category=${child.slug}">${child.name}</a></li>
+                        `).join('')}
+                    </ul>
+                </div>
+            ` : ''}
+        </li>
+    `).join('');
+}
+
+
+// NEW: Load featured products
+async function loadFeaturedProducts() {
+    try {
+        const response = await fetch('/api/products?featured=true&limit=12');
+        if (!response.ok) throw new Error('Failed to fetch featured products');
+
+        const result = await response.json();
+        if (result.success && result.data.products) {
+            products = result.data.products; // Store products globally
+            displayProducts(products);
+        }
+    } catch (error) {
+        console.error("Error loading featured products:", error);
+        const grid = document.getElementById('productGrid');
+        if (grid) {
+            grid.innerHTML = '<p class="error-message">Không thể tải sản phẩm. Vui lòng thử lại sau.</p>';
+        }
+    }
+}
+
+
+// Load products - This function is now just a wrapper around display
 function loadProducts() {
-    const productsContainer = document.getElementById('products');
-    if (!productsContainer) return; // Exit if products container doesn't exist
-    
-    const filteredProducts = filterProducts();
+    const grid = document.getElementById('productGrid');
+    if (!grid) return;
+    // Data is now loaded by loadFeaturedProducts, so we just filter and display
+    const filteredProducts = filterProducts(); 
     displayProducts(filteredProducts);
 }
 
@@ -130,7 +204,7 @@ function filterProducts() {
     const category = urlParams.get('category');
     const search = urlParams.get('search');
     
-    let filtered = products;
+    let filtered = products; // Uses the globally fetched products
     
     if (category && category !== 'all') {
         filtered = filtered.filter(product => product.category === category);
@@ -146,50 +220,89 @@ function filterProducts() {
     return filtered;
 }
 
-// Display products
+// Display products - MODIFIED to handle API data structure
 function displayProducts(productsToShow) {
-    const productsContainer = document.getElementById('products');
-    if (!productsContainer) return; // Exit if products container doesn't exist
+    const grid = document.getElementById('productGrid');
+    if (!grid) return;
     
     if (productsToShow.length === 0) {
-        productsContainer.innerHTML = '<p class="no-products">Không tìm thấy sản phẩm nào.</p>';
+        grid.innerHTML = '<p class="no-products">Không tìm thấy sản phẩm nào.</p>';
         return;
     }
     
-    productsContainer.innerHTML = productsToShow.map(product => `
-        <div class="product-card" data-category="${product.category}">
+    grid.innerHTML = productsToShow.map(product => {
+        const originalPrice = product.price.originalPrice;
+        const salePrice = product.price.salePrice || originalPrice;
+        const discount = originalPrice > salePrice ? Math.round(((originalPrice - salePrice) / originalPrice) * 100) : 0;
+
+        return `
+        <div class="product-card" data-category="${product.category.slug}">
             <div class="product-image">
-                <img src="${product.image}" alt="${product.name}">
+                <img src="${product.images[0] || 'https://via.placeholder.com/300'}" alt="${product.name}">
                 <div class="product-overlay">
-                    <button class="btn-quick-view" onclick="quickView(${product.id})">
+                    <button class="btn-quick-view" onclick="quickView('${product._id}')">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="btn-add-to-cart" onclick="addToCart(${product.id})">
+                    <button class="btn-add-to-cart" onclick="addToCart('${product._id}')">
                         <i class="fas fa-shopping-cart"></i>
                     </button>
                 </div>
-                <div class="discount-badge">
-                    -${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%
-                </div>
+                ${discount > 0 ? `<div class="discount-badge">-${discount}%</div>` : ''}
             </div>
             <div class="product-info">
                 <h3 class="product-name">${product.name}</h3>
                 <div class="product-rating">
                     <div class="stars">
-                        ${generateStars(product.rating)}
+                        ${generateStars(product.ratings ? product.ratings.average : 0)}
                     </div>
-                    <span class="rating-text">${product.rating} (${product.reviews})</span>
+                    <span class="rating-text">${product.ratings ? product.ratings.average.toFixed(1) : 'Mới'} (${product.ratings ? product.ratings.count : 0})</span>
                 </div>
                 <div class="product-price">
-                    <span class="current-price">${formatPrice(product.price)}</span>
-                    <span class="original-price">${formatPrice(product.originalPrice)}</span>
+                    <span class="current-price">${formatPrice(salePrice)}</span>
+                    ${discount > 0 ? `<span class="original-price">${formatPrice(originalPrice)}</span>` : ''}
                 </div>
-                <button class="btn-buy-now" onclick="buyNow(${product.id})">
+                <button class="btn-buy-now" onclick="buyNow('${product._id}')">
                     Mua ngay
                 </button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
+}
+
+// Hero slider đơn giản
+function initHeroSlider() {
+    const slides = Array.from(document.querySelectorAll('.hero-slide'));
+    const prevBtn = document.querySelector('.hero-nav.prev');
+    const nextBtn = document.querySelector('.hero-nav.next');
+    const dotsContainer = document.getElementById('heroDots');
+    if (!slides.length || !prevBtn || !nextBtn || !dotsContainer) return;
+    let index = 0;
+
+    function render() {
+        slides.forEach((s, i) => s.classList.toggle('active', i === index));
+        dotsContainer.innerHTML = slides.map((_, i) => `<button class="dot${i===index?' active':''}" data-i="${i}"></button>`).join('');
+        Array.from(dotsContainer.querySelectorAll('.dot')).forEach(btn => {
+            btn.addEventListener('click', () => {
+                index = parseInt(btn.dataset.i, 10);
+                render();
+            });
+        });
+    }
+
+    prevBtn.addEventListener('click', () => {
+        index = (index - 1 + slides.length) % slides.length;
+        render();
+    });
+    nextBtn.addEventListener('click', () => {
+        index = (index + 1) % slides.length;
+        render();
+    });
+    // Tự động chạy
+    setInterval(() => {
+        index = (index + 1) % slides.length;
+        render();
+    }, 5000);
+    render();
 }
 
 // Generate star rating
@@ -222,12 +335,15 @@ function formatPrice(price) {
     }).format(price);
 }
 
-// Add to cart
+// Add to cart - MODIFIED to use _id
 function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
-    if (!product) return;
+    const product = products.find(p => p._id === productId);
+    if (!product) {
+        console.error("Product not found for ID:", productId);
+        return;
+    }
     
-    const existingItem = cart.find(item => item.id === productId);
+    const existingItem = cart.find(item => item._id === productId);
     
     if (existingItem) {
         existingItem.quantity += 1;
@@ -269,7 +385,7 @@ function showNotification(message, type = 'info') {
     }, 3000);
 }
 
-// Buy now
+// Buy now - MODIFIED to use _id
 function buyNow(productId) {
     addToCart(productId);
     setTimeout(() => {
@@ -277,40 +393,44 @@ function buyNow(productId) {
     }, 1000);
 }
 
-// Quick view
+// Quick view - MODIFIED to use _id
 function quickView(productId) {
-    const product = products.find(p => p.id === productId);
+    const product = products.find(p => p._id === productId);
     if (!product) return;
     
     const modal = document.createElement('div');
     modal.className = 'modal';
+
+    const originalPrice = product.price.originalPrice;
+    const salePrice = product.price.salePrice || originalPrice;
+
     modal.innerHTML = `
         <div class="modal-content">
             <span class="close">&times;</span>
             <div class="product-detail">
-                <img src="${product.image}" alt="${product.name}">
+                <img src="${product.images[0] || 'https://via.placeholder.com/400'}" alt="${product.name}">
                 <div class="product-info">
                     <h2>${product.name}</h2>
                     <div class="product-rating">
-                        <div class="stars">${generateStars(product.rating)}</div>
-                        <span>${product.rating} (${product.reviews} đánh giá)</span>
+                        <div class="stars">${generateStars(product.ratings ? product.ratings.average : 0)}</div>
+                        <span>${product.ratings ? product.ratings.average.toFixed(1) : 'Mới'} (${product.ratings ? product.ratings.count : 0} đánh giá)</span>
                     </div>
                     <div class="product-price">
-                        <span class="current-price">${formatPrice(product.price)}</span>
-                        <span class="original-price">${formatPrice(product.originalPrice)}</span>
+                        <span class="current-price">${formatPrice(salePrice)}</span>
+                        ${originalPrice > salePrice ? `<span class="original-price">${formatPrice(originalPrice)}</span>` : ''}
                     </div>
                     <p>${product.description}</p>
                     <div class="product-features">
                         <h4>Đặc điểm nổi bật:</h4>
                         <ul>
-                            ${product.features.map(feature => `<li>${feature}</li>`).join('')}
+                            ${(product.attributes || []).map(attr => `<li><strong>${attr.key}:</strong> ${attr.value}</li>`).join('')}
                         </ul>
                     </div>
                     <div class="product-actions">
-                        <button class="btn-add-to-cart" onclick="addToCart(${product.id})">
+                        <button class="btn-add-to-cart" onclick="addToCart('${product._id}')">
                             <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
                         </button>
-                        <button class="btn-buy-now" onclick="buyNow(${product.id})">
+                        <button class="btn-buy-now" onclick="buyNow('${product._id}')">
                             Mua ngay
                         </button>
                     </div>
@@ -403,6 +523,7 @@ function loadCartItems() {
     const cartItems = document.querySelector('.cart-items');
     if (!cartItems) return; // Exit if not on cart/checkout page
     
+    // Cart data is now based on API structure
     if (cart.length === 0) {
         cartItems.innerHTML = '<p class="empty-cart">Giỏ hàng trống</p>';
         return;
@@ -410,17 +531,17 @@ function loadCartItems() {
     
     cartItems.innerHTML = cart.map(item => `
         <div class="cart-item">
-            <img src="${item.image}" alt="${item.name}">
+            <img src="${item.images[0] || 'https://via.placeholder.com/100'}" alt="${item.name}">
             <div class="cart-item-info">
                 <h4>${item.name}</h4>
-                <p class="price">${formatPrice(item.price)}</p>
+                <p class="price">${formatPrice(item.price.salePrice || item.price.originalPrice)}</p>
                 <div class="quantity-controls">
-                    <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                    <button onclick="updateQuantity('${item._id}', -1)">-</button>
                     <span>${item.quantity}</span>
-                    <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                    <button onclick="updateQuantity('${item._id}', 1)">+</button>
                 </div>
             </div>
-            <button class="remove-item" onclick="removeFromCart(${item.id})">
+            <button class="remove-item" onclick="removeFromCart('${item._id}')">
                 <i class="fas fa-trash"></i>
             </button>
         </div>
@@ -429,9 +550,9 @@ function loadCartItems() {
     updateCartTotal();
 }
 
-// Update quantity
+// Update quantity - MODIFIED for _id
 function updateQuantity(productId, change) {
-    const item = cart.find(item => item.id === productId);
+    const item = cart.find(item => item._id === productId);
     if (!item) return;
     
     item.quantity += change;
@@ -445,20 +566,20 @@ function updateQuantity(productId, change) {
     loadCartItems();
 }
 
-// Remove from cart
+// Remove from cart - MODIFIED for _id
 function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
+    cart = cart.filter(item => item._id !== productId);
     saveCartToStorage(cart);
     updateCartCount();
     loadCartItems();
     showNotification('Đã xóa sản phẩm khỏi giỏ hàng', 'info');
 }
 
-// Update cart total
+// Update cart total - MODIFIED for API price structure
 function updateCartTotal() {
     const cartTotal = document.querySelector('.cart-total');
     if (!cartTotal) return;
     
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const total = cart.reduce((sum, item) => sum + ((item.price.salePrice || item.price.originalPrice) * item.quantity), 0);
     cartTotal.textContent = formatPrice(total);
 }
