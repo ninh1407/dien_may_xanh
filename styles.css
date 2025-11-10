@@ -5,11 +5,19 @@
     box-sizing: border-box;
 }
 
+:root {
+    --dmx-green: #009981;
+    --dmx-green-dark: #007a68;
+    --dmx-yellow: #ffd400;
+    --dmx-text: #1e293b;
+    --dmx-bg: #f8f9fa;
+}
+
 body {
     font-family: 'Arial', sans-serif;
     line-height: 1.6;
-    color: #333;
-    background-color: #f8f9fa;
+    color: var(--dmx-text);
+    background-color: var(--dmx-bg);
 }
 
 .container {
@@ -20,7 +28,7 @@ body {
 
 /* Header Styles */
 .header {
-    background: #0b8bd3;
+    background: var(--dmx-green);
     color: white;
     padding: 0;
     position: sticky;
@@ -31,7 +39,7 @@ body {
 
 /* Topbar for DMX style */
 .header.dmx .topbar {
-    background: #0668a3;
+    background: var(--dmx-green-dark);
     font-size: 0.95rem;
 }
 .topbar .container {
@@ -76,7 +84,7 @@ body {
 }
 
 .search-bar button {
-    background: #0b8bd3;
+    background: var(--dmx-green);
     color: white;
     border: none;
     padding: 0.5rem 1rem;
@@ -86,7 +94,7 @@ body {
 }
 
 .search-bar button:hover {
-    background: #0668a3;
+    background: var(--dmx-green-dark);
 }
 
 .header-actions {

@@ -197,7 +197,7 @@
                     productsGrid.innerHTML = data.data.map(product => `
                         <div class="product-card">
                             <div class="product-image">
-                                <img src="${product.images[0] || 'https://via.placeholder.com/300x300'}" alt="${product.name}">
+                                <img src="${(product.images && product.images[0] && product.images[0].url) ? product.images[0].url : (product.images && product.images[0] ? product.images[0] : 'https://via.placeholder.com/300x300')}" alt="${product.name}">
                                 <div class="product-badge">Hot</div>
                             </div>
                             <div class="product-info">
@@ -231,7 +231,7 @@
                     dealsGrid.innerHTML = data.data.slice(0, 4).map(product => `
                         <div class="deal-card">
                             <div class="deal-image">
-                                <img src="${product.images[0] || 'https://via.placeholder.com/250x250'}" alt="${product.name}">
+                                <img src="${(product.images && product.images[0] && product.images[0].url) ? product.images[0].url : (product.images && product.images[0] ? product.images[0] : 'https://via.placeholder.com/250x250')}" alt="${product.name}">
                                 <div class="deal-discount">-${Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}%</div>
                             </div>
                             <div class="deal-info">

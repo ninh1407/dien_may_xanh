@@ -673,40 +673,50 @@
 </head>
 <body>
     <!-- Header (same as other pages) -->
-    <header class="header">
+    <header class="header dmx">
+        <div class="topbar">
+            <div class="container">
+                <div class="topbar-left">
+                    <a href="#stores"><i class="fa-solid fa-location-dot"></i> Hệ thống cửa hàng</a>
+                    <a href="#promos"><i class="fa-solid fa-gift"></i> Khuyến mãi</a>
+                </div>
+                <div class="topbar-right">
+                    <a href="tel:18001061"><i class="fa-solid fa-phone"></i> Hotline: 1800.1061</a>
+                    <a href="#support"><i class="fa-regular fa-circle-question"></i> Hỗ trợ</a>
+                </div>
+            </div>
+        </div>
         <div class="container">
             <div class="header-top">
                 <div class="logo">
-                    <h1>Điện Máy Xanh</h1>
+                    <h1><span class="logo-mark">●</span> Điện Máy XANH</h1>
                 </div>
                 <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+                    <input type="text" id="searchInput" placeholder="Bạn cần tìm gì hôm nay?">
                     <button class="search-btn" onclick="searchProducts()">
                         <i class="fas fa-search"></i>
                     </button>
                 </div>
                 <div class="header-actions">
-                    <div class="user-menu" id="userMenu">
-                        <a href="login.html" class="login-btn">
-                            <i class="fas fa-user"></i>
-                            <span>Đăng nhập</span>
-                        </a>
-                    </div>
-                    <a href="cart.html" class="cart-btn">
+                    <a href="cart.html" class="cart-btn" title="Giỏ hàng">
                         <i class="fas fa-shopping-cart"></i>
                         <span class="cart-count" id="cartCount">0</span>
                     </a>
+                    <a href="login.html" class="login-btn">
+                        <i class="fas fa-user"></i>
+                        <span>Đăng nhập</span>
+                    </a>
                 </div>
             </div>
-            
-            <nav class="main-nav">
-                <ul class="nav-list">
-                    <li><a href="home.html">Trang chủ</a></li>
-                    <li><a href="products.html?category=dien-thoai">Điện thoại</a></li>
-                    <li><a href="products.html?category=laptop">Laptop</a></li>
-                    <li><a href="products.html?category=may-tinh-bang">Máy tính bảng</a></li>
-                    <li><a href="products.html?category=phu-kien">Phụ kiện</a></li>
-                    <li><a href="orders.html">Đơn hàng</a></li>
+            <nav class="nav-menu mega">
+                <ul>
+                    <li><a href="products.html?category=tivi"><i class="fa-solid fa-tv"></i> TV</a></li>
+                    <li><a href="products.html?category=tulanh"><i class="fa-solid fa-snowflake"></i> Tủ lạnh</a></li>
+                    <li><a href="products.html?category=maygiat"><i class="fa-solid fa-shirt"></i> Máy giặt</a></li>
+                    <li><a href="products.html?category=dieuhoa"><i class="fa-solid fa-wind"></i> Điều hòa</a></li>
+                    <li><a href="products.html?category=giadung"><i class="fa-solid fa-blender"></i> Gia dụng</a></li>
+                    <li><a href="products.html?category=nhabep"><i class="fa-solid fa-kitchen-set"></i> Nhà bếp</a></li>
+                    <li><a href="products.html?category=phukien"><i class="fa-solid fa-plug"></i> Phụ kiện</a></li>
                 </ul>
             </nav>
         </div>

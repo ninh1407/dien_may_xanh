@@ -18,6 +18,7 @@ const cartRoutes = require('./routes/cart');
 const orderRoutes = require('./routes/orders');
 const userRoutes = require('./routes/users');
 const paymentRoutes = require('./routes/payments');
+const searchRoutes = require('./routes/search');
 const adminRoutes = require('./routes/admin');
 
 const app = express();
@@ -127,6 +128,14 @@ app.get('/checkout.css', (req, res) => {
   res.sendFile(path.join(__dirname, 'checkout.css'));
 });
 
+// Lightweight cache headers for static assets
+app.use((req, res, next) => {
+  if (/\.(css|js|png|jpg|jpeg|gif|svg|ico)$/.test(req.path)) {
+    res.set('Cache-Control', 'public, max-age=604800, immutable'); // 7 days
+  }
+  next();
+});
+
 // Route cho trang chủ và các trang HTML
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
@@ -175,6 +184,7 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/search', searchRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

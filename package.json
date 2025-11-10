@@ -12,6 +12,7 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "seed": "node scripts/seed.js",
+    "import:dmx": "node scripts/import-dmx-data.js",
     "build": "echo 'No build step required for Node.js'",
     "postinstall": "mkdir -p uploads/avatars uploads/products uploads/categories uploads/reviews",
     "check-env": "node scripts/check-env.js",

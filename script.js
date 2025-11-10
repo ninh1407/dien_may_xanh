@@ -238,7 +238,7 @@ function displayProducts(productsToShow) {
         return `
         <div class="product-card" data-category="${product.category.slug}">
             <div class="product-image">
-                <img src="${product.images[0] || 'https://via.placeholder.com/300'}" alt="${product.name}">
+                <img src="${(product.images && product.images[0] && product.images[0].url) ? product.images[0].url : (product.images && product.images[0] ? product.images[0] : 'https://via.placeholder.com/300')}" alt="${product.name}">
                 <div class="product-overlay">
                     <button class="btn-quick-view" onclick="quickView('${product._id}')">
                         <i class="fas fa-eye"></i>
@@ -408,7 +408,7 @@ function quickView(productId) {
         <div class="modal-content">
             <span class="close">&times;</span>
             <div class="product-detail">
-                <img src="${product.images[0] || 'https://via.placeholder.com/400'}" alt="${product.name}">
+        <img src="${(product.images && product.images[0] && product.images[0].url) ? product.images[0].url : (product.images && product.images[0] ? product.images[0] : 'https://via.placeholder.com/400')}" alt="${product.name}">
                 <div class="product-info">
                     <h2>${product.name}</h2>
                     <div class="product-rating">
@@ -531,7 +531,7 @@ function loadCartItems() {
     
     cartItems.innerHTML = cart.map(item => `
         <div class="cart-item">
-            <img src="${item.images[0] || 'https://via.placeholder.com/100'}" alt="${item.name}">
+        <img src="${(item.images && item.images[0] && item.images[0].url) ? item.images[0].url : (item.images && item.images[0] ? item.images[0] : 'https://via.placeholder.com/100')}" alt="${item.name}">
             <div class="cart-item-info">
                 <h4>${item.name}</h4>
                 <p class="price">${formatPrice(item.price.salePrice || item.price.originalPrice)}</p>

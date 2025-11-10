@@ -60,7 +60,7 @@ cp .env.example .env
 # PORT=5000
 # MONGODB_URI=mongodb://dmx:strong_password@127.0.0.1:27017/dmx?authSource=dmx
 # JWT_SECRET=<chuoi_bao_mat>
-# BASE_URL=https://<domain-hoac-ip>
+# BASE_URL=http://20.205.30.184
 node scripts/check-env.js
 ```
 
@@ -108,6 +108,7 @@ curl http://127.0.0.1:5000/api/products?featured=true&limit=12
 ```
 
 Qua Nginx: truy cập `http://<domain>` hoặc `https://<domain>` nếu đã bật SSL.
+Nếu dùng IP, truy cập: `http://20.205.30.184`
 
 ---
 
